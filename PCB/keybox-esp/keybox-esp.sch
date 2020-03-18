@@ -1,0 +1,208 @@
+EESchema Schematic File Version 4
+EELAYER 30 0
+EELAYER END
+$Descr A4 11693 8268
+encoding utf-8
+Sheet 1 1
+Title ""
+Date ""
+Rev ""
+Comp ""
+Comment1 ""
+Comment2 ""
+Comment3 ""
+Comment4 ""
+$EndDescr
+$Comp
+L screen:i2c_screen i2c_scr1
+U 1 1 5E72169C
+P 8950 1575
+F 0 "i2c_scr1" H 9579 2240 50  0000 C CNN
+F 1 "i2c_screen" H 9579 2149 50  0000 C CNN
+F 2 "i2c_screen:i2c_screen" H 9350 1875 50  0001 C CNN
+F 3 "" H 9350 1875 50  0001 C CNN
+	1    8950 1575
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:+3.3V #PWR0101
+U 1 1 5E724353
+P 8675 1375
+F 0 "#PWR0101" H 8675 1225 50  0001 C CNN
+F 1 "+3.3V" H 8690 1548 50  0000 C CNN
+F 2 "" H 8675 1375 50  0001 C CNN
+F 3 "" H 8675 1375 50  0001 C CNN
+	1    8675 1375
+	0    -1   -1   0   
+$EndComp
+$Comp
+L power:+3.3V #PWR0102
+U 1 1 5E726D35
+P 1125 1425
+F 0 "#PWR0102" H 1125 1275 50  0001 C CNN
+F 1 "+3.3V" H 1140 1598 50  0000 C CNN
+F 2 "" H 1125 1425 50  0001 C CNN
+F 3 "" H 1125 1425 50  0001 C CNN
+	1    1125 1425
+	0    -1   -1   0   
+$EndComp
+$Comp
+L power:GND #PWR0103
+U 1 1 5E7273B8
+P 8675 1475
+F 0 "#PWR0103" H 8675 1225 50  0001 C CNN
+F 1 "GND" H 8680 1302 50  0000 C CNN
+F 2 "" H 8675 1475 50  0001 C CNN
+F 3 "" H 8675 1475 50  0001 C CNN
+	1    8675 1475
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR0104
+U 1 1 5E72786A
+P 1150 2725
+F 0 "#PWR0104" H 1150 2475 50  0001 C CNN
+F 1 "GND" H 1155 2552 50  0000 C CNN
+F 2 "" H 1150 2725 50  0001 C CNN
+F 3 "" H 1150 2725 50  0001 C CNN
+	1    1150 2725
+	0    1    1    0   
+$EndComp
+$Comp
+L power:GND #PWR0105
+U 1 1 5E72AAF9
+P 3125 1325
+F 0 "#PWR0105" H 3125 1075 50  0001 C CNN
+F 1 "GND" H 3130 1152 50  0000 C CNN
+F 2 "" H 3125 1325 50  0001 C CNN
+F 3 "" H 3125 1325 50  0001 C CNN
+	1    3125 1325
+	-1   0    0    1   
+$EndComp
+$Comp
+L esp32-wrover:ESP32-WROVER U1
+U 1 1 5E72D18A
+P 2150 2075
+F 0 "U1" H 2125 3412 60  0000 C CNN
+F 1 "ESP32-WROVER" H 2125 3306 60  0000 C CNN
+F 2 "esp32-wrover:ESP32-WROVER" H 2600 1775 60  0001 C CNN
+F 3 "" H 2600 1775 60  0001 C CNN
+	1    2150 2075
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	1250 2725 1150 2725
+Wire Wire Line
+	1250 1425 1125 1425
+Wire Wire Line
+	3000 1425 3125 1425
+Wire Wire Line
+	3125 1425 3125 1325
+Wire Wire Line
+	3000 1325 3125 1325
+Connection ~ 3125 1325
+$Comp
+L power:GND #PWR0106
+U 1 1 5E73E434
+P 1125 1325
+F 0 "#PWR0106" H 1125 1075 50  0001 C CNN
+F 1 "GND" H 1130 1152 50  0000 C CNN
+F 2 "" H 1125 1325 50  0001 C CNN
+F 3 "" H 1125 1325 50  0001 C CNN
+	1    1125 1325
+	-1   0    0    1   
+$EndComp
+Wire Wire Line
+	1250 1325 1125 1325
+Text GLabel 3125 1625 2    50   UnSpc ~ 0
+scr_scl
+Text GLabel 3125 1925 2    50   UnSpc ~ 0
+scr_sda
+Text GLabel 8675 1275 0    50   UnSpc ~ 0
+scr_scl
+Text GLabel 8675 1175 0    50   UnSpc ~ 0
+scr_sda
+Wire Wire Line
+	3000 1625 3125 1625
+Wire Wire Line
+	3000 1525 3125 1525
+Wire Wire Line
+	9000 1175 8675 1175
+Wire Wire Line
+	9000 1275 8675 1275
+Wire Wire Line
+	9000 1375 8675 1375
+Wire Wire Line
+	9000 1475 8675 1475
+$Comp
+L Connector:Micro_SD_Card J1
+U 1 1 5E745444
+P 9525 3800
+F 0 "J1" H 9475 4517 50  0000 C CNN
+F 1 "Micro_SD_Card" H 9475 4426 50  0000 C CNN
+F 2 "Connector_Card:microSD_HC_Hirose_DM3AT-SF-PEJM5" H 10675 4100 50  0001 C CNN
+F 3 "http://katalog.we-online.de/em/datasheet/693072010801.pdf" H 9525 3800 50  0001 C CNN
+	1    9525 3800
+	1    0    0    -1  
+$EndComp
+Text GLabel 8550 3600 0    50   Input ~ 0
+SD_CS
+Text GLabel 8550 3700 0    50   Input ~ 0
+SD_MOSI
+Text GLabel 8550 3900 0    50   Input ~ 0
+SD_CLK
+Text GLabel 8550 4100 0    50   Input ~ 0
+SD_MISO
+$Comp
+L power:GND #PWR0107
+U 1 1 5E748DDD
+P 8550 4000
+F 0 "#PWR0107" H 8550 3750 50  0001 C CNN
+F 1 "GND" V 8555 3872 50  0000 R CNN
+F 2 "" H 8550 4000 50  0001 C CNN
+F 3 "" H 8550 4000 50  0001 C CNN
+	1    8550 4000
+	0    1    1    0   
+$EndComp
+$Comp
+L power:+3.3V #PWR0108
+U 1 1 5E7491B4
+P 8550 3800
+F 0 "#PWR0108" H 8550 3650 50  0001 C CNN
+F 1 "+3.3V" V 8565 3928 50  0000 L CNN
+F 2 "" H 8550 3800 50  0001 C CNN
+F 3 "" H 8550 3800 50  0001 C CNN
+	1    8550 3800
+	0    -1   -1   0   
+$EndComp
+NoConn ~ 8625 3500
+NoConn ~ 8625 4200
+Wire Wire Line
+	8550 3600 8625 3600
+Wire Wire Line
+	8550 3700 8625 3700
+Wire Wire Line
+	8550 3800 8625 3800
+Wire Wire Line
+	8550 3900 8625 3900
+Wire Wire Line
+	8550 4000 8625 4000
+Wire Wire Line
+	8550 4100 8625 4100
+Text GLabel 3125 1525 2    50   Input ~ 0
+SD_MOSI
+Wire Wire Line
+	3125 1925 3000 1925
+Text GLabel 3125 2325 2    50   Input ~ 0
+SD_CS
+Text GLabel 3125 2225 2    50   Input ~ 0
+SD_CLK
+Text GLabel 3125 2125 2    50   Input ~ 0
+SD_MISO
+Wire Wire Line
+	3125 2125 3000 2125
+Wire Wire Line
+	3000 2225 3125 2225
+Wire Wire Line
+	3125 2325 3000 2325
+$EndSCHEMATC
