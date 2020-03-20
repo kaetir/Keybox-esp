@@ -19,4 +19,5 @@ class Model{
     void delete_account(std::string name);
     bool is_webserver_on();
     void switch_server_status();
+    bool login(std::string user, std::string password);
 };
