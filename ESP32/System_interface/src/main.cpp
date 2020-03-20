@@ -1,7 +1,7 @@
 #include <Arduino.h>
-#include "Menu.h"
+#include "Controller.h"
 
-Menu *menu = new Menu();
+Controller *controller = new Controller();
 
 //DESCRIPTION: initialize the serial communications
 //PARAMS: none
@@ -14,5 +14,5 @@ void setup() {
 //PARAMS: none
 //RETURN VALUE: none
 void loop() {
-  menu->update();
+  controller->update();
 }
