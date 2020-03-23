@@ -1,0 +1,3 @@
+(sym_lib_table
+  (lib (name capacitive_touch_pads)(type Legacy)(uri ${KEYBOX_ESP}/libs/capacitive_touch_pads.lib)(options "")(descr ""))
+)

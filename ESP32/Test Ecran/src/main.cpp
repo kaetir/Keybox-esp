@@ -6,6 +6,12 @@
 
 Adafruit_SSD1306 display = Adafruit_SSD1306(128, 32, &Wire);
 
+
+bool afficher_text(string txt, size_t pos_x, size_t pos_y){
+
+}
+
+
 void setup() {
   Serial.begin(9600);
 
