@@ -1,3 +1,4 @@
 (fp_lib_table
   (lib (name capacitive_touch_pads)(type KiCad)(uri ${KEYBOX_ESP}/libs/capacitive_touch_pads.pretty)(options "")(descr ""))
+  (lib (name keybox-esp)(type KiCad)(uri ${KEYBOX_ESP}/libs/keybox-esp.pretty)(options "")(descr ""))
 )
