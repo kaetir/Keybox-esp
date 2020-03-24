@@ -1,16 +1,16 @@
 #include "View.h"
+#include "Model.h"
 #include <vector>
 #include <string>
 #include <Arduino.h>
 
 class Controller{
     private:
-    View view;
+    View *view;
+    Model *model;
     int cursor_postion;
     std::vector<int> line_number_of_choices;
-    std::vector<int> type_of_choices;
     std::vector<std::string> menu_lines;
-    std::vector<std::string> filenames;
 
     public:
     Controller();
