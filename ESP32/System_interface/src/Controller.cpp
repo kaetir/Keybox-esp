@@ -18,9 +18,17 @@ Controller::Controller(){
 
     this->cursor_postion = 0; //INITIALIZE THE CURSOR OF THE USER ON THE FIRST CHOICE
     this->line_number_of_choices.push_back(2); //ADDING THE "LOG IN" CHOICE NUMBER OF LINE
-    //TODO CALL model->read()
-    //TODO INITIALIZE menu_lines
+    this->menu_lines = this->model->read(filenames[0]); //LOADING THE WELCOME SCREEN
 
+    for(int i = 0; i < menu_lines.size();i++){ //FILL THE BUFFER WITH THE MENU LINES
+        if(i < NUM_LINE){
+            this->menu_display.push_back(this->menu_lines[i]);
+            this->view->draw_text(menu_lines[i],i,0);
+        }else{
+            break;
+        }
+    }
+    this->view->show(); //DISPLAY THE BUFFER
 }
 
 int Controller::get_input(){
@@ -77,5 +85,23 @@ bool Controller::has_input(){
         return true; //input detected
     }else{
         return false; //No input detected
+    }
+}
+
+void Controller::update_display(){
+    this->view->clear_buffer();
+    this->view->clear();
+    for(int i=0; i < this->menu_display.size();i++){
+        this->view->draw_text(this->menu_display[i]);
+    }
+    this->view->show();
+}
+
+void Controller::update(){
+    if(this->has_input()){
+        int input = this->get_input();
+        if(input != -1 && input != 0){
+            
+        }
     }
 }
