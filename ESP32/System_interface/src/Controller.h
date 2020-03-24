@@ -16,9 +16,39 @@ class Controller{
     public:
     Controller();
     ~Controller();
+
+    /** 
+     * @Desc:  Update the system by taking actions determined by the user input
+     * @Params:  none
+     * @Returns:  none
+     */
     void update();
+
+    /** 
+     * @Desc:  Update the display of the menu
+     * @Params:  none
+     * @Returns:  none
+     */
     void update_display();
+
+    /** 
+     * @Desc:  Get the inputs of the user
+     * @Params:  none
+     * @Returns:  int
+     */
     int get_input();
+
+    /** 
+     * @Desc:  Check if the user used an input
+     * @Params:  none
+     * @DReturns:  bool
+     */
     bool has_input();
-    std::string typing_input(int line=0, int col=0);
+
+    /** 
+     * @Desc:  Get the user typing (username, password...)
+     * @Params:  none
+     * @Returns:  none
+     */
+    void typing_input(int line=0, int col=0);
 };

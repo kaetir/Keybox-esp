@@ -20,35 +20,35 @@ class View{
     /** 
      * @Desc:  Clear the display of the screen
      * @Params:  none
-     * @DReturns:  none
+     * @Returns:  none
      */
     void clear();
 
     /** 
      * @Desc:  Display the content of the buffer on the screen
      * @Params:  none
-     * @DReturns:  none
+     * @Returns:  none
      */
     void show();
 
     /** 
      * @Desc:  Add a string to the buffer at the designated coordinates (start at (0,0))
      * @Params:  (std::string, int, int)
-     * @DReturns:  none
+     * @Returns:  none
      */
     void draw_text(std::string txt, int line=0, int col=0);
 
     /** 
      * @Desc:  Add a character to the buffer at the designated coordinates (start at (0,0))
      * @Params:  (char, int, int)
-     * @DReturns:  none
+     * @Returns:  none
      */
     void draw_char(char a, int line=0, int col=0);
 
     /** 
      * @Desc:  Clear the content of the buffer
      * @Params:  none
-     * @DReturns:  none
+     * @Returns:  none
      */
     void clear_buffer();
 };

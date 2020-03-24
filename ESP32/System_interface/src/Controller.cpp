@@ -101,7 +101,7 @@ void Controller::update(){
     if(this->has_input()){
         int input = this->get_input();
         if(input != -1 && input != 0){
-            
+
         }
     }
 }
