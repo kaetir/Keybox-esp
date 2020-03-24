@@ -1,0 +1,9 @@
+nom:
+
+nom d'utilisateur:
+
+mot de passe:
+
+envoyer à l'ordinateur
+modifier
+supprimer

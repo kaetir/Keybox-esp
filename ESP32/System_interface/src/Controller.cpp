@@ -1,11 +1,11 @@
 #include "Controller.h"
 
-#define BUTTON_LEFT 27
-#define BUTTON_RIGHT 14
-#define BUTTON_TOP 12
-#define BUTTON_BOTTOM 13
-#define BUTTON_OK 32
-#define BUTTON_BACK 33
+#define BUTTON_LEFT 33
+#define BUTTON_RIGHT 32
+#define BUTTON_TOP 27
+#define BUTTON_BOTTOM 14
+#define BUTTON_OK 12
+#define BUTTON_BACK 13
 #define THRESHOLD_VAL 10
 
 std::string filenames[] = {"Welcome_menu", "Login", "Main_menu", "Web_server", "Accounts_menu", 
