@@ -31,6 +31,10 @@ Controller::Controller(){
     this->view->show(); //DISPLAY THE BUFFER
 }
 
+Controller::~Controller(){
+    delete this->view;
+}
+
 int Controller::get_input(){
     int button_left_val, button_right_val, button_top_val, button_bottom_val, button_ok_val, button_back_val;
     button_left_val = touchRead(BUTTON_LEFT);
@@ -102,6 +106,21 @@ void Controller::update(){
         int input = this->get_input();
         if(input != -1 && input != 0){
 
+            switch (input){
+            case 3: //TOP
+                break;
+
+            case 4: //BOTTOM
+                break;
+
+            case 5: //OK
+                break;
+
+            
+            case 6: //BACK
+                break;
+
+            }
         }
     }
 }

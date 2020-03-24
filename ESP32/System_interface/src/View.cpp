@@ -8,6 +8,7 @@ View::View(){
         for(;;); // Don't proceed, loop forever
     }
     this->display.display();
+    delay(2000);
     this->display.clearDisplay();
     this->display.display();
 
