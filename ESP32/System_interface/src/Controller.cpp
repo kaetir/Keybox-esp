@@ -16,23 +16,80 @@ Controller::Controller(){
     this->view = new View();
     this->model = new Model();
 
-    this->cursor_postion = 0; //INITIALIZE THE CURSOR OF THE USER ON THE FIRST CHOICE
     this->line_number_of_choices.push_back(2); //ADDING THE "LOG IN" CHOICE NUMBER OF LINE
     this->menu_lines = this->model->read(filenames[0]); //LOADING THE WELCOME SCREEN
 
     for(int i = 0; i < menu_lines.size();i++){ //FILL THE BUFFER WITH THE MENU LINES
         if(i < NUM_LINE){
-            this->menu_display.push_back(this->menu_lines[i]);
             this->view->draw_text(menu_lines[i],i,0);
+            this->buffer.push_back(i);
         }else{
             break;
         }
     }
+    this->cursor_position = 0;
     this->view->show(); //DISPLAY THE BUFFER
 }
 
 Controller::~Controller(){
     delete this->view;
+}
+
+void Controller::scroll(int a){
+    if(a == 1){ //SCROLL UP
+        if(this->cursor_position != this->buffer[0]){ //THE CURSOR IS NOT AT THE TOP OF THE BUFFER
+            std::vector<int>::iterator it = std::find(this->buffer.begin(), this->buffer.end(), this->cursor_position); 
+            int index_of_cursor = std::distance(this->buffer.begin(), it); //INDEX OF THE CURSOR IN THE BUFFER (from 1 to 3)
+            bool has_found = false; //HAS FOUND AN INPUT ABOVE THE CURSOR ACTUAL POSITION ?
+            for(int i = index_of_cursor-1; i >= 0; i--){
+                if(std::binary_search(this->line_number_of_choices.begin(), this->line_number_of_choices.end(), this->buffer[i]) == true){
+                    this->cursor_position = this->buffer[i]; //INPUT FOUND ABOVE (CASE 1)
+                    has_found = true;
+                    break;
+                }
+            }
+            if(has_found == false && this->buffer[0] != 0){ //NO INPUT FOUND ABOVE (CASE 2)
+                this->cursor_position = this->buffer[0]-1;
+                for(int i = 0; i < this->buffer.size(); i++){ //UPDATE THE BUFFER
+                    this->buffer[i] --;
+                }
+            }
+        }else{ //THE CURSOR IS AT THE TOP OF THE BUFFER (CASE 3)
+            if(this->cursor_position != 0){
+                this->cursor_position --;
+                for(int i = 0; i < this->buffer.size(); i++){ //UPDATE THE BUFFER
+                    this->buffer[i] --;
+                }
+            }
+        }
+
+    }else{ //SCROLL DOWN
+        if(this->cursor_position != this->buffer[this->buffer.size()-1]){ //THE CURSOR IS NOT AT THE BOTTOM OF THE BUFFER
+            std::vector<int>::iterator it = std::find(this->buffer.begin(), this->buffer.end(), this->cursor_position); 
+            int index_of_cursor = std::distance(this->buffer.begin(), it); //INDEX OF THE CURSOR IN THE BUFFER (from 0 to 2)
+            bool has_found = false; //HAS FOUND AN INPUT BELOW THE CURSOR ACTUAL POSITION ?
+            for(int i = index_of_cursor+1; i < this->buffer.size(); i++){
+                if(std::binary_search(this->line_number_of_choices.begin(), this->line_number_of_choices.end(), this->buffer[i]) == true){
+                    this->cursor_position = this->buffer[i]; //INPUT FOUND BELOW (CASE 1)
+                    has_found = true;
+                    break;
+                }
+            }
+            if(has_found == false && this->buffer[this->buffer.size()-1] != this->menu_lines.size()-1){ //NO INPUT FOUND BELOW (CASE 2)
+                this->cursor_position = this->buffer[this->buffer.size()-1]+1;
+                for(int i = 0; i < this->buffer.size(); i++){ //UPDATE THE BUFFER
+                    this->buffer[i] ++;
+                }
+            }
+        }else{ //THE CURSOR IS AT THE BOTTOM OF THE BUFFER (CASE 3)
+            if(this->cursor_position != this->menu_lines.size()-1){
+                this->cursor_position ++;
+                for(int i = 0; i < this->buffer.size(); i++){ //UPDATE THE BUFFER
+                    this->buffer[i] ++;
+                }
+            }
+        }
+    }
 }
 
 int Controller::get_input(){
@@ -95,8 +152,17 @@ bool Controller::has_input(){
 void Controller::update_display(){
     this->view->clear_buffer();
     this->view->clear();
-    for(int i=0; i < this->menu_display.size();i++){
-        this->view->draw_text(this->menu_display[i]);
+
+    for(int i=0; i < this->buffer.size();i++){
+        if(this->buffer[i] == this->cursor_position){
+            if(std::binary_search(this->line_number_of_choices.begin(), this->line_number_of_choices.end(), this->buffer[i]) == true){
+                this->view->draw_text("->"+this->menu_lines[this->buffer[i]],i); //CURSOR ON AN INPUT
+            }else{
+                this->view->draw_text(this->menu_lines[this->buffer[i]],i); //CURSOR NOT ON AN INPUT
+            }
+        }else{
+            this->view->draw_text(this->menu_lines[this->buffer[i]],i); //CURSOR NOT HERE
+        }
     }
     this->view->show();
 }
@@ -108,9 +174,19 @@ void Controller::update(){
 
             switch (input){
             case 3: //TOP
+                this->scroll(1);
+                Serial.println("TOP");
+                Serial.println("CURSOR:");
+                Serial.println(this->cursor_position);
+                this->update_display();
                 break;
 
             case 4: //BOTTOM
+                this->scroll(-1);
+                Serial.println("BOTTOM");
+                Serial.println("CURSOR:");
+                Serial.println(this->cursor_position);
+                this->update_display();
                 break;
 
             case 5: //OK

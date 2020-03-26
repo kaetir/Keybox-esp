@@ -3,19 +3,28 @@
 #include <vector>
 #include <string>
 #include <Arduino.h>
+#include <iterator>
+#include <algorithm>
 
 class Controller{
     private:
     View *view;
     Model *model;
-    int cursor_postion;
-    std::vector<int> line_number_of_choices;
+    int cursor_position; //CONTAIN THE POSITION OF THE CURSOR ON THE WHOLE MENU
+    std::vector<int> line_number_of_choices; //CONTAIN THE INDEXES OF THE LINES WHERE THE CURSOR SHOULD APPEAR
     std::vector<std::string> menu_lines; //CONTAIN THE WHOLE MENU LINES
-    std::vector<std::string> menu_display; //CONTAIN ONLY THE 4 MENU LINES TO DISPLAY
+    std::vector<int> buffer; //CONTAIN THE INDEXES OF THE LINES TO BE DISPALYED (MAX SIZE == NUM_LINE)
 
     public:
     Controller();
     ~Controller();
+
+    /** 
+     * @Desc:  Update the cursor_position and the buffer
+     * @Params:  none
+     * @Returns:  none
+     */
+    void scroll(int a);
 
     /** 
      * @Desc:  Update the system by taking actions determined by the user input
