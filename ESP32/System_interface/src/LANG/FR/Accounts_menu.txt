@@ -1,3 +1,2 @@
-Selectionner un compte
-Ajouter un compte
-menu principal
+>Mes comptes
+>Ajouter un compte

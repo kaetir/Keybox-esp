@@ -4,7 +4,6 @@ nom d'utilisateur:
 
 mot de passe:
 
-envoyer à l'ordinateur
-modifier
-supprimer
-retour
+>Envoyer
+>Modifier
+>Supprimer

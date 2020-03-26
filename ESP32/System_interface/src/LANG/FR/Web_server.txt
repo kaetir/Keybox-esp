@@ -1,4 +1,4 @@
 Serveur Web:
-STATUS:
-on/off
-menu principal
+[STATUS]:
+>On/Off
+>Menu principal
