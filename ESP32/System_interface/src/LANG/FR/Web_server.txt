@@ -1,3 +1,4 @@
 Serveur Web:
 STATUS:
-
+on/off
+menu principal
