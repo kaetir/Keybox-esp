@@ -11,7 +11,7 @@
 class View{
     private:
     Adafruit_SSD1306 display; //Obj controlling the ssd1306 screen
-    char buffer[NUM_LINE][NUM_COL];
+    char buffer[NUM_LINE][NUM_COL]; //Buffer of the content to display
 
     public:
     View(); //Constructor

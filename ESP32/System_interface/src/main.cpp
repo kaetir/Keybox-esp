@@ -14,6 +14,6 @@ void setup() {
 //PARAMS: none
 //RETURN VALUE: none
 void loop() {
-  //controller->update();
-  //delay(50);
+  controller->update();
+  delay(50);
 }

@@ -1,14 +1,14 @@
 #include "View.h"
 
 View::View(){
-    this->display = Adafruit_SSD1306(128, 32, &Wire);
+    this->display = Adafruit_SSD1306(128, 32, &Wire); //INITIALISATION
 
-    if(!this->display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) { 
+    if(!this->display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) { //SECURITY AGAINST INT ERROR
         Serial.println(F("SSD1306 allocation failed"));
         for(;;); // Don't proceed, loop forever
     }
     this->display.display();
-    delay(2000);
+    delay(1000);
     this->display.clearDisplay();
     this->display.display();
 
@@ -17,7 +17,7 @@ View::View(){
 
     for(int i=0; i < NUM_LINE; i++){
         for(int j=0; j < NUM_COL; j++){
-            buffer[i][j] = ' ';
+            buffer[i][j] = ' '; //FILL THE BUFFER
         }
     }
 }
@@ -39,7 +39,7 @@ void View::show(){
         for(int j=0; j < NUM_COL; j++){
             tmp.push_back(buffer[i][j]);
         }
-        this->display.println(tmp.c_str());
+        this->display.println(tmp.c_str()); //DISPLAY THE CONTENT OF THE BUFFER LINE BY LINE
     }
     this->display.display();
 }
@@ -47,8 +47,8 @@ void View::show(){
 void View::draw_text(std::string txt, int line, int col){
     if(line >= 0 && line < NUM_LINE && col >= 0 && col < NUM_COL){
         for(int i=col; i < txt.length()+col; i++){
-            if(i < NUM_COL){
-                buffer[line][i] = txt[i-col];
+            if(i < NUM_COL){ //OVERFLOW SECURITY
+                buffer[line][i] = txt[i-col]; //DRAW A STRING CHARACTER BY CHARACTER AT THE COORDINATES (line, col)
             }else{
                 break;
             }
@@ -58,14 +58,14 @@ void View::draw_text(std::string txt, int line, int col){
 
 void View::draw_char(char a, int line, int col){
     if(line >= 0 && line < NUM_LINE && col >= 0 && col < NUM_COL){
-        this->buffer[line][col] = a;
+        this->buffer[line][col] = a; //DRAW A CHARACTER AT THE COORDINATES (line, col)
     }
 }
 
 void View::clear_buffer(){
     for(int i=0; i < NUM_LINE; i++){
         for(int j=0; j < NUM_COL; j++){
-            buffer[i][j] = ' ';
+            buffer[i][j] = ' '; //GO THROUGH ALL LINES AND CLEAR EACH CHARACTER
         }
     }
 }
