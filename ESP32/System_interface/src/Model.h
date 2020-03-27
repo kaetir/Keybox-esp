@@ -2,9 +2,12 @@
 #include <vector>
 #include <fstream>
 
+#define MENU_LANG_FOLDER "/MENU/LANG"
+#define MENU_STRUCTURE_FOLDER "/MENU/STRUCTURE"
+
 class Model{
     private:
-    std::string path_to_folder;
+    std::string lang_folder;
     std::vector<std::string> unlocked_locker;
     std::vector<std::string> user_ids;
     

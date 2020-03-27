@@ -6,7 +6,7 @@ Controller *controller;
 //PARAMS: none
 //RETURN VALUE: none
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(115200);
   controller = new Controller();
 }
 
