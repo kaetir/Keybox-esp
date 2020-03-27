@@ -4,6 +4,6 @@ nom d'utilisateur:
 
 mot de passe:
 
->Envoyer
->Modifier
->Supprimer
+Envoyer
+Modifier
+Supprimer

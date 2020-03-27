@@ -60,4 +60,11 @@ class Controller{
      * @Returns:  none
      */
     void typing_input(int line=0, int col=0);
+
+    /** 
+     * @Desc:  Get the user typing (username, password...)
+     * @Params:  none
+     * @Returns:  none
+     */
+    void load_menu(std::string menu);
 };

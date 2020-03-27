@@ -1,2 +1,2 @@
->Mes comptes
->Ajouter un compte
+Mes comptes
+Ajouter un compte

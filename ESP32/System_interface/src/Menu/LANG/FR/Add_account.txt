@@ -1,8 +1,8 @@
 nouveau compte:
 nom:
->
+
 nom d'utilisateur:
->
+
 mot de passe:
->
->Ajouter
+
+Ajouter

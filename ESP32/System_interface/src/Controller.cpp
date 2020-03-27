@@ -35,6 +35,10 @@ Controller::~Controller(){
     delete this->view;
 }
 
+void Controller::load_menu(std::string menu){
+    this->menu_lines = this->model->read(menu);
+}
+
 void Controller::scroll(int a){
     if(a == 1){ //SCROLL UP
         if(this->cursor_position != this->buffer[0]){ //THE CURSOR IS NOT AT THE TOP OF THE BUFFER
