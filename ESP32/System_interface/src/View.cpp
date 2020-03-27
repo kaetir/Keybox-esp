@@ -4,7 +4,7 @@ View::View(){
     this->display = Adafruit_SSD1306(128, 32, &Wire); //INITIALISATION
 
     if(!this->display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) { //SECURITY AGAINST INT ERROR
-        Serial.println(F("SSD1306 allocation failed"));
+        Serial.println(F("SSD1306 allocation failed")); //TODO INPUT IN LOG FILE
         for(;;); // Don't proceed, loop forever
     }
     this->display.display();
