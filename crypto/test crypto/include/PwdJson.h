@@ -23,8 +23,8 @@ bool gen_new_file(char * filename, char * username, char * main_password_hash, c
  
     }
  
-    const char * sensorType = doc["SensorType"]; //Get sensor type value
-    int value = doc["Value"];                    //Get value of sensor measurement
+    const char * sensorType = doc["mainuser"]; //Get sensor type value
+    int value = doc["checkpwd"];                    //Get value of sensor measurement
  
     Serial.print("mainuser: ");
     Serial.println(sensorType);
