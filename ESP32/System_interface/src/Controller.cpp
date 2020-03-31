@@ -16,9 +16,20 @@ Controller::Controller(){
     this->view = new View();
     this->model = new Model();
 
-    this->line_number_of_choices.push_back(2); //ADDING THE "LOG IN" CHOICE NUMBER OF LINE
-    this->menu_lines = this->model->read(filenames[0]); //LOADING THE WELCOME SCREEN
+    if(!this->spf.begin(true)){
+        Serial.println("SPIFFS Mount Failed");
+    }
+    this->load_menu(filenames[0]);
+    this->init_buffer();
+}
 
+Controller::~Controller(){
+    delete this->view;
+}
+
+void Controller::init_buffer(){
+    this->view->clear();
+    this->view->clear_buffer();
     for(int i = 0; i < menu_lines.size();i++){ //FILL THE BUFFER WITH THE MENU LINES
         if(i < NUM_LINE){
             this->view->draw_text(menu_lines[i],i,0);
@@ -31,12 +42,134 @@ Controller::Controller(){
     this->view->show(); //DISPLAY THE BUFFER
 }
 
-Controller::~Controller(){
-    delete this->view;
-}
+void Controller::load_menu(std::string menu_name){
+    this->line_number_of_choices.clear(); //Clear the choices position
+    this->inputs_function.clear(); //Clear the choices function (and arguments)
+    this->inputs_link.clear(); //Clear the choices link
+    this->input_fields.clear(); //Clear the input fields
 
-void Controller::load_menu(std::string menu){
-    this->menu_lines = this->model->read(menu);
+    this->menu_lines = this->model->read(this->spf, menu_name, "txt"); //Fill the menu_lines with the new menu
+    std::vector<std::string> struct_tmp = this->model->read(this->spf, menu_name, "struct"); //get the menu structure
+
+    std::vector<std::string> tmp_vect;
+
+    int num;
+    char type;
+    std::string funct;
+    std::string menu;
+    std::string name;
+    std::string arg1;
+    std::string arg2;
+    std::string arg3;
+
+    for(int i = 0; i < this->menu_lines.size(); i++){
+        std::istringstream ss(struct_tmp[i]);
+        ss >> num >> type;
+
+        switch (type){
+        case '>': //LINK TO ANOTHER MENU
+            ss >> menu;
+            this->line_number_of_choices.push_back(num);
+            tmp_vect = {"None"};
+            this->inputs_function.push_back(tmp_vect);
+            this->inputs_link.push_back(menu);
+            break;
+
+        case '<': // INPUT FIELD
+            ss >> name;
+            this->line_number_of_choices.push_back(num);
+            tmp_vect = {"InputField", "None"};
+            this->inputs_function.push_back(tmp_vect);
+            this->inputs_link.push_back("None");
+            this->input_fields[name] = "";
+            break;
+
+        case 'f': //ACTIVATE A FUNCTION BEFORE SWITCHING MENU
+            this->line_number_of_choices.push_back(num);
+            ss >> menu >> funct;
+            this->inputs_link.push_back(menu);
+
+            if(funct == "add_account"){ //add_account(arg1:name, arg2:username, arg3:password)
+                ss >> arg1 >> arg2 >> arg3;
+                tmp_vect = {funct, arg1, arg2, arg3};
+                this->inputs_function.push_back(tmp_vect);
+
+            }else if(funct == "deleteAccount"){ //deleteAccount()
+                tmp_vect = {funct};
+                this->inputs_function.push_back(tmp_vect);
+
+            }else if(funct == "login"){ //login(arg1:user, arg2:password)
+                ss >> arg1 >> arg2;
+                tmp_vect = {funct, arg1, arg2};
+                this->inputs_function.push_back(tmp_vect);
+                
+            }else if(funct == "logoff"){ //logoff()
+                tmp_vect = {funct};
+                this->inputs_function.push_back(tmp_vect);
+                
+            }else if(funct == "setAccountPassword"){ //setAccountPassword(arg1:password)
+                ss >> arg1;
+                tmp_vect = {funct, arg1};
+                this->inputs_function.push_back(tmp_vect);
+                
+            }else if(funct == "setAccountUsername"){ //setAccountUsername(arg1:username)
+                ss >> arg1;
+                tmp_vect = {funct, arg1};
+                this->inputs_function.push_back(tmp_vect);
+                
+            }else if(funct == "sendToComputer"){ //sendToComputer()
+                tmp_vect = {funct};
+                this->inputs_function.push_back(tmp_vect);
+                
+            }else if(funct == "switch_ServerStatus"){ //switch_ServerStatus()
+                tmp_vect = {funct};
+                this->inputs_function.push_back(tmp_vect);   
+            }
+            break;
+
+        case 'g': //GET FUNCTIONS
+            ss >> funct;
+            if(funct == "getAccountlist"){ //DISPLAY THE LIST OF ACCOUNTS
+                std::vector<std::string> account_list = this->model->get_accounts();
+
+                this->menu_lines[num] = account_list[0];
+                this->line_number_of_choices.push_back(num);
+                
+                tmp_vect = {"selectAccount", std::string(0)};
+                this->inputs_function.push_back(tmp_vect);
+                this->inputs_link.push_back("Display_account");
+
+                for(int j = 1; j < account_list.size(); j++){
+                    this->menu_lines.push_back(account_list[j]);
+                    this->line_number_of_choices.push_back(menu_lines.size()-1);
+
+                    std::stringstream int_to_string;
+                    int_to_string << j;
+
+                    tmp_vect = {"selectAccount", int_to_string.str()};
+                    this->inputs_function.push_back(tmp_vect);
+                    this->inputs_link.push_back("Display_account");
+                }
+
+            }else if(funct == "getAccountName"){
+                this->menu_lines[num] += this->model->get_account(this->selected_account)[0]; //DISPLAY THE SELECTED ACCOUNT NAME
+
+            }else if(funct == "getAccountUsername"){
+                this->menu_lines[num] += this->model->get_account(this->selected_account)[1]; //DISPLAY THE SELECTED ACCOUNT USERNAME
+
+            }else if(funct == "getAccountPassword"){
+                this->menu_lines[num] += this->model->get_account(this->selected_account)[2]; //DISPLAY THE SELECTED ACCOUNT PASSWORD
+
+            }else if(funct == "getServerStatus"){
+                if(this->model->is_webserver_on()){
+                    this->menu_lines[num] += " ON"; //DISPLAY WEB SERVER STATUS
+                }else{
+                    this->menu_lines[num] += " OFF"; //DISPLAY WEB SERVER STATUS
+                }
+            }
+            break;
+        }
+    }
 }
 
 void Controller::scroll(int a){

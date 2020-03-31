@@ -1,6 +1,9 @@
 #include <string>
 #include <vector>
 #include <fstream>
+#include <sstream>
+#include "FS.h"
+#include "SPIFFS.h"
 
 #define MENU_LANG_FOLDER "/MENU/LANG"
 #define MENU_STRUCTURE_FOLDER "/MENU/STRUCTURE"
@@ -14,9 +17,9 @@ class Model{
     public:
     Model();
     ~Model();
-    std::vector<std::string> read(std::string filename);
+    std::vector<std::string> read(fs::FS &fs, std::string filename, std::string type);
     std::vector<std::string> get_accounts();
-    std::vector<std::string> get_account(std::string account_name);
+    std::vector<std::string> get_account(int account_index);
     bool add_account(std::string name, std::string user, std::string pwd);
     bool modify_account_password(std::string name, std::string pwd);
     bool modify_account_username(std::string name, std::string user);

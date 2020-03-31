@@ -8,6 +8,7 @@ Controller *controller;
 void setup() {
   Serial.begin(115200);
   controller = new Controller();
+  
 }
 
 //DESCRIPTION: main loop to update the interface

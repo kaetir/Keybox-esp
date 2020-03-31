@@ -1,47 +1,27 @@
 #include "View.h"
 
 View::View(){
-    this->display = Adafruit_SSD1306(128, 32, &Wire); //INITIALISATION
-
-    if(!this->display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) { //SECURITY AGAINST INT ERROR
-        Serial.println(F("SSD1306 allocation failed")); //TODO INPUT IN LOG FILE
-        for(;;); // Don't proceed, loop forever
-    }
-    this->display.display();
-    delay(1000);
-    this->display.clearDisplay();
-    this->display.display();
-
-    this->display.setTextSize(1);
-    this->display.setTextColor(SSD1306_WHITE);
-
-    for(int i=0; i < NUM_LINE; i++){
-        for(int j=0; j < NUM_COL; j++){
-            buffer[i][j] = ' '; //FILL THE BUFFER
-        }
-    }
+    this->screen = new Screen();
+    this->clear_buffer();
 }
 
 View::~View(){
-    delete &this->display;
+    delete &this->screen;
 }
 
 void View::clear(){
-    this->display.clearDisplay();
-    this->display.setCursor(0,0);
-    this->display.display();
+    this->screen->clear();
 }
 
 void View::show(){
     for(int i=0; i < NUM_LINE; i++){
-        this->display.setCursor(0,i*8);
         std::string tmp;
         for(int j=0; j < NUM_COL; j++){
             tmp.push_back(buffer[i][j]);
         }
-        this->display.println(tmp.c_str()); //DISPLAY THE CONTENT OF THE BUFFER LINE BY LINE
+        this->screen->setLine(tmp, i); //DISPLAY THE CONTENT OF THE BUFFER LINE BY LINE
     }
-    this->display.display();
+    this->screen->show();
 }
 
 void View::draw_text(std::string txt, int line, int col){

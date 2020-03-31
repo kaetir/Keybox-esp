@@ -1,16 +1,11 @@
-#include <Arduino.h>
-#include <SPI.h>
-#include <Wire.h>
-#include <Adafruit_GFX.h>
-#include <Adafruit_SSD1306.h>
-#include <string>
+#include "Screen.h"
 
 #define NUM_LINE 4
 #define NUM_COL 21
 
 class View{
     private:
-    Adafruit_SSD1306 display; //Obj controlling the ssd1306 screen
+    Screen *screen;
     char buffer[NUM_LINE][NUM_COL]; //Buffer of the content to display
 
     public:
