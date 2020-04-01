@@ -1,17 +1,17 @@
 #include "View.h"
 #include "Model.h"
-#include <vector>
 #include <string>
-#include <Arduino.h>
 #include <iterator>
 #include <algorithm>
 #include <sstream>
 #include <map>
+#include "Inputs.h"
 
 class Controller{
     private:
     View *view;
     Model *model;
+    Inputs *inputs;
     fs::SPIFFSFS spf;
     int cursor_position; //CONTAIN THE POSITION OF THE CURSOR ON THE WHOLE MENU
     std::vector<int> line_number_of_choices; //CONTAIN THE INDEXES OF THE LINES WHERE THE CURSOR SHOULD APPEAR
@@ -49,20 +49,6 @@ class Controller{
      * @Returns:  none
      */
     void update_display();
-
-    /** 
-     * @Desc:  Get the inputs of the user
-     * @Params:  none
-     * @Returns:  int
-     */
-    int get_input();
-
-    /** 
-     * @Desc:  Check if the user used an input
-     * @Params:  none
-     * @DReturns:  bool
-     */
-    bool has_input();
 
     /** 
      * @Desc:  Get the user typing (username, password...)

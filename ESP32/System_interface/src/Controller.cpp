@@ -1,13 +1,5 @@
 #include "Controller.h"
 
-#define BUTTON_LEFT 33
-#define BUTTON_RIGHT 32
-#define BUTTON_TOP 27
-#define BUTTON_BOTTOM 14
-#define BUTTON_OK 12
-#define BUTTON_BACK 13
-#define THRESHOLD_VAL 10
-
 std::string filenames[] = {"Welcome_menu", "Login", "Main_menu", "Web_server", "Accounts_menu", 
 "Add_account", "Account_selection", "Display_account", "Delete_account", "Send_to_computer", 
 "Modify_account", "New_password", "New_username"};
@@ -15,6 +7,7 @@ std::string filenames[] = {"Welcome_menu", "Login", "Main_menu", "Web_server", "
 Controller::Controller(){
     this->view = new View();
     this->model = new Model();
+    this->inputs = new Inputs();
 
     if(!this->spf.begin(true)){
         Serial.println("SPIFFS Mount Failed");
@@ -229,63 +222,6 @@ void Controller::scroll(int a){
     }
 }
 
-int Controller::get_input(){
-    int button_left_val, button_right_val, button_top_val, button_bottom_val, button_ok_val, button_back_val;
-    button_left_val = touchRead(BUTTON_LEFT);
-    button_right_val = touchRead(BUTTON_RIGHT);
-    button_top_val = touchRead(BUTTON_TOP);
-    button_bottom_val = touchRead(BUTTON_BOTTOM);
-    button_ok_val = touchRead(BUTTON_OK);
-    button_back_val = touchRead(BUTTON_BACK);
-
-    if(button_left_val > THRESHOLD_VAL && button_right_val > THRESHOLD_VAL && button_top_val > THRESHOLD_VAL && button_bottom_val > THRESHOLD_VAL && button_ok_val > THRESHOLD_VAL && button_back_val > THRESHOLD_VAL){
-        return -1; //No input detected
-    }
-    //Loop to wait for the user to release the buttons
-    while(touchRead(BUTTON_LEFT) < THRESHOLD_VAL || touchRead(BUTTON_RIGHT) < THRESHOLD_VAL || touchRead(BUTTON_TOP) < THRESHOLD_VAL || touchRead(BUTTON_BOTTOM) < THRESHOLD_VAL || touchRead(BUTTON_OK) < THRESHOLD_VAL || touchRead(BUTTON_BACK) < THRESHOLD_VAL){
-        delay(100);
-    }
-    //Input detected:
-    if(button_left_val < THRESHOLD_VAL && button_right_val > THRESHOLD_VAL && button_top_val > THRESHOLD_VAL && button_bottom_val > THRESHOLD_VAL && button_ok_val > THRESHOLD_VAL && button_back_val > THRESHOLD_VAL){
-        return 1; //Input 1 detected
-    
-    }else if(button_right_val < THRESHOLD_VAL && button_left_val > THRESHOLD_VAL && button_top_val > THRESHOLD_VAL && button_bottom_val > THRESHOLD_VAL && button_ok_val > THRESHOLD_VAL && button_back_val > THRESHOLD_VAL){
-        return 2; //Input 2 detected
-    
-    }else if(button_top_val < THRESHOLD_VAL && button_right_val > THRESHOLD_VAL && button_left_val > THRESHOLD_VAL && button_bottom_val > THRESHOLD_VAL && button_ok_val > THRESHOLD_VAL && button_back_val > THRESHOLD_VAL){
-        return 3; //Input 3 detected
-    
-    }else if(button_bottom_val < THRESHOLD_VAL && button_right_val > THRESHOLD_VAL && button_top_val > THRESHOLD_VAL && button_left_val > THRESHOLD_VAL && button_ok_val > THRESHOLD_VAL && button_back_val > THRESHOLD_VAL){
-        return 4; //Input 4 detected
-    
-    }else if(button_ok_val < THRESHOLD_VAL && button_right_val > THRESHOLD_VAL && button_top_val > THRESHOLD_VAL && button_bottom_val > THRESHOLD_VAL && button_left_val > THRESHOLD_VAL && button_back_val > THRESHOLD_VAL){
-        return 5; //Input ok detected
-    
-    }else if(button_back_val < THRESHOLD_VAL && button_right_val > THRESHOLD_VAL && button_top_val > THRESHOLD_VAL && button_bottom_val > THRESHOLD_VAL && button_ok_val > THRESHOLD_VAL && button_left_val > THRESHOLD_VAL){
-        return 6; //Input back detected
-
-    }else{
-        return 0; //Multiple inputs detected
-
-    }
-}
-
-bool Controller::has_input(){
-    int button_left_val, button_right_val, button_top_val, button_bottom_val, button_ok_val, button_back_val;
-    button_left_val = touchRead(BUTTON_LEFT);
-    button_right_val = touchRead(BUTTON_RIGHT);
-    button_top_val = touchRead(BUTTON_TOP);
-    button_bottom_val = touchRead(BUTTON_BOTTOM);
-    button_ok_val = touchRead(BUTTON_OK);
-    button_back_val = touchRead(BUTTON_BACK);
-
-    if(button_left_val < THRESHOLD_VAL || button_right_val < THRESHOLD_VAL || button_top_val < THRESHOLD_VAL || button_bottom_val < THRESHOLD_VAL || button_ok_val < THRESHOLD_VAL || button_back_val < THRESHOLD_VAL){
-        return true; //input detected
-    }else{
-        return false; //No input detected
-    }
-}
-
 void Controller::update_display(){
     this->view->clear_buffer();
     this->view->clear();
@@ -305,32 +241,32 @@ void Controller::update_display(){
 }
 
 void Controller::update(){
-    if(this->has_input()){
-        int input = this->get_input();
-        if(input != -1 && input != 0){
+    if(this->inputs->has_input()){
+        int input = this->inputs->get_input();
+        if(input != -1 && input != -2){
 
             switch (input){
-            case 3: //TOP
+            case 2: //UP
                 this->scroll(1);
-                Serial.println("TOP");
+                Serial.println("UP");
                 Serial.println("CURSOR:");
                 Serial.println(this->cursor_position);
                 this->update_display();
                 break;
 
-            case 4: //BOTTOM
+            case 3: //DOWN
                 this->scroll(-1);
-                Serial.println("BOTTOM");
+                Serial.println("DOWN");
                 Serial.println("CURSOR:");
                 Serial.println(this->cursor_position);
                 this->update_display();
                 break;
 
-            case 5: //OK
+            case 4: //OK
                 break;
 
             
-            case 6: //BACK
+            case 5: //BACK
                 break;
 
             }
