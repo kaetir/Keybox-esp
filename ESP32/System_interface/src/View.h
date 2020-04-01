@@ -9,8 +9,19 @@ class View{
     char buffer[NUM_LINE][NUM_COL]; //Buffer of the content to display
 
     public:
-    View(); //Constructor
-    ~View(); //Destructor
+    /** 
+     * @Desc:  Constructor
+     * @Params:  none
+     * @Returns:  none
+     */
+    View();
+
+    /** 
+     * @Desc:  Destructor
+     * @Params:  none
+     * @Returns:  none
+     */
+    ~View();
 
     /** 
      * @Desc:  Clear the display of the screen
