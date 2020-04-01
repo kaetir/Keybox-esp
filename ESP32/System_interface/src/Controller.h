@@ -26,7 +26,18 @@ class Controller{
 
 
     public:
+    /** 
+     * @Desc:  Contructor
+     * @Params:  none
+     * @Returns:  none
+     */
     Controller();
+
+    /** 
+     * @Desc:  Destructor
+     * @Params:  none
+     * @Returns:  none
+     */
     ~Controller();
 
     /** 
