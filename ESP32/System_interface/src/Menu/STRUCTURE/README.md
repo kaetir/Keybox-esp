@@ -7,11 +7,11 @@
 
 ## exemples:
 ```
-0 t
-1 > menu1
-2 < name_of_input
-3 f menu1 funct1 name_of_arg1 name_of_arg2 name_of_arg3 //The number of arg can change
-4 g funct1
+0 t //Display plain text
+1 > menu1  //Direct link to the menu1
+2 < name_of_input //Input Field name: name_fo_input
+3 f menu1 funct1 name_of_arg1 name_of_arg2 name_of_arg3 //Go to the menu1 after calling the funct1
+4 g funct2 //Call the funct2 at the loading of the current menu
 ```
 
 Login.txt:
@@ -32,3 +32,26 @@ Login.struct:
 4 < password
 5 f Main_menu login user password
 ```
+
+## List of input fields:
+- user: Name of the user of the Vault
+- username: Name of the user of the account
+- name: Name/URL of the account
+- password: password of the Vault or password of the account
+
+## List of funct1 and their arguments:
+- add_account name username password
+- deleteAccount
+- login user password
+- logoff
+- setAccountPassword password
+- setAccountUsername username
+- sendToComputer
+- switch_ServerStatus
+
+## List of funct2:
+- getAccountlist
+- getAccountName
+- getAccountUsername
+- getAccountPassword
+- getServerStatus

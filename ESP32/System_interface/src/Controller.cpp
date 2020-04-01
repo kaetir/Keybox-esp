@@ -18,6 +18,8 @@ Controller::Controller(){
 
 Controller::~Controller(){
     delete this->view;
+    delete this->model;
+    delete this->inputs;
 }
 
 void Controller::init_buffer(){
