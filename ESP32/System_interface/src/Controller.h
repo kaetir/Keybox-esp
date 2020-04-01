@@ -9,20 +9,20 @@
 
 class Controller{
     private:
-    View *view;
-    Model *model;
-    Inputs *inputs;
-    fs::SPIFFSFS spf;
-    int cursor_position; //CONTAIN THE POSITION OF THE CURSOR ON THE WHOLE MENU
-    std::vector<int> line_number_of_choices; //CONTAIN THE INDEXES OF THE LINES WHERE THE CURSOR SHOULD APPEAR
-    std::vector<std::string> menu_lines; //CONTAIN THE WHOLE MENU LINES
-    std::vector<int> buffer; //CONTAIN THE INDEXES OF THE LINES TO BE DISPALYED (MAX SIZE == NUM_LINE)
+    View *view; //Oject containing the View
+    Model *model; //Oject containing the Model
+    Inputs *inputs; //Oject reading the inputs from the user
+    fs::SPIFFSFS spf; //Object containing the SPIFFS reader/writer
+    int cursor_position; //Current position of the cursor on the menu (starting at 0)
+    std::vector<int> line_number_of_choices; //Array of index of choices on the current menu
+    std::vector<std::string> menu_lines; //Array of the content of each menu lines
+    std::vector<int> buffer; //Array of index (of menu_lines) to display
 
-    std::string actual_menu; //Name of the actual menu
+    std::string actual_menu; //Filename of the current menu
     int selected_account; //Index of the selected account in the account list
     std::vector<std::vector<std::string>> inputs_function; //Name of the functions and argument for each choice (it can be "None")
-    std::vector<std::string> inputs_link; //Name of the menu to switch to
-    std::map<std::string, std::string> input_fields; //List of the input fields in the menu
+    std::vector<std::string> inputs_link; //Name of the next menu to load
+    std::map<std::string, std::string> input_fields; //List of the input fields in the current menu
 
 
     public:
@@ -31,7 +31,7 @@ class Controller{
 
     /** 
      * @Desc:  Update the cursor_position and the buffer
-     * @Params:  none
+     * @Params:  1 for scroll up and -1 for scroll down
      * @Returns:  none
      */
     void scroll(int a);
