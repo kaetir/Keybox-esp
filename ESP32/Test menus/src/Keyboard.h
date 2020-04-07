@@ -4,7 +4,7 @@
 #include <iterator>
 #include <algorithm>
 
-#define WIDTH 19
+#define WIDTH 17 //21 - 2 - 2
 
 class Keyboard
 {
@@ -18,4 +18,6 @@ public:
     void left(int *cursor_pos, std::vector<int> *buffer);
     void right(int *cursor_pos, std::vector<int> *buffer, std::vector<char> *word);
     void del(int *cursor_pos, std::vector<int> *buffer, std::vector<char> *word);
+    void add(std::vector<char> *word, std::vector<int> *buffer);
+    std::string get_display(int *cursor_pos, std::vector<int> *buffer, std::vector<char> *word, bool *new_char);
 };

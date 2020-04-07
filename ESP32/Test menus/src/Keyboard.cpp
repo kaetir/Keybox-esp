@@ -71,6 +71,22 @@ Keyboard::~Keyboard()
 {
 }
 
+void Keyboard::add(std::vector<char> *word, std::vector<int> *buffer)
+{
+    if (buffer->size() < WIDTH)
+    {
+        buffer->push_back(buffer->size());
+    }
+    else
+    {
+        for (int i = 0; i < buffer->size(); i++)
+        {
+            (*buffer)[i]++;
+        }
+    }
+    word->push_back(this->Alphabet[0]);
+}
+
 void Keyboard::del(int *cursor_pos, std::vector<int> *buffer, std::vector<char> *word)
 {
     if (word->size() > 1) //SECURITY TO LIMIT TO 1 CHARACTER BY WORD MINIMUM
@@ -106,21 +122,9 @@ void Keyboard::left(int *cursor_pos, std::vector<int> *buffer)
 
 void Keyboard::right(int *cursor_pos, std::vector<int> *buffer, std::vector<char> *word)
 {
-    *cursor_pos += 1;
-    if (buffer->size() < WIDTH)
+    if (*cursor_pos < word->size() - 1)
     {
-        if (*cursor_pos == buffer->size())
-        {
-            buffer->push_back(buffer->size());
-            word->push_back(Alphabet[0]);
-        }
-    }
-    else
-    {
-        if (*cursor_pos == word->size())
-        {
-            word->push_back(Alphabet[0]);
-        }
+        *cursor_pos += 1;
         if (*cursor_pos > (*buffer)[buffer->size() - 1])
         {
             for (int i = 0; i < buffer->size(); i++)
@@ -128,6 +132,10 @@ void Keyboard::right(int *cursor_pos, std::vector<int> *buffer, std::vector<char
                 (*buffer)[i]++;
             }
         }
+    }
+    else if (*cursor_pos == word->size() - 1)
+    {
+        *cursor_pos += 1; //cursor_pos == word->size()
     }
 }
 
@@ -157,4 +165,64 @@ void Keyboard::down(int *cursor_pos, std::vector<char> *word)
     {
         (*word)[*cursor_pos] = Alphabet[0];
     }
+}
+
+std::string Keyboard::get_display(int *cursor_pos, std::vector<int> *buffer, std::vector<char> *word, bool *new_char)
+{
+    std::string ret = "";
+    if (buffer->size() < WIDTH)
+    {
+        if (*new_char == true)
+        {
+            for (int i = 0; i < buffer->size(); i++)
+            {
+                ret += (*word)[(*buffer)[i]];
+            }
+            ret += "<>";
+        }
+        else
+        {
+            for (int i = 0; i < buffer->size(); i++)
+            {
+                if (*cursor_pos == (*buffer)[i])
+                {
+                    ret += "<";
+                    ret += (*word)[(*buffer)[i]];
+                    ret += ">";
+                }
+                else
+                {
+                    ret += (*word)[(*buffer)[i]];
+                }
+            }
+        }
+    }
+    else
+    {
+        if (*new_char == true)
+        {
+            for (int i = 1; i < buffer->size(); i++)
+            {
+                ret += (*word)[(*buffer)[i]];
+            }
+            ret += "<>";
+        }
+        else
+        {
+            for (int i = 0; i < buffer->size(); i++)
+            {
+                if (*cursor_pos == (*buffer)[i])
+                {
+                    ret += "<";
+                    ret += (*word)[(*buffer)[i]];
+                    ret += ">";
+                }
+                else
+                {
+                    ret += (*word)[(*buffer)[i]];
+                }
+            }
+        }
+    }
+    return ret;
 }

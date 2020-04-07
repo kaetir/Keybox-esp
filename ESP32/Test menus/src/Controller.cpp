@@ -342,40 +342,43 @@ void Controller::select_choice()
                 std::vector<int>::iterator it = std::find(this->line_number_of_choices.begin(), this->line_number_of_choices.end(), this->cursor_position);
                 int index_of_cursor = std::distance(this->line_number_of_choices.begin(), it); //INDEX OF THE CURSOR IN THE VECTOR OF CHOICES
 
-                if (this->inputs_function[index_of_cursor][0] == "None")
+                std::string funct = this->inputs_function[index_of_cursor][0];
+
+                if (funct == "None")
                 {
                     is_valid = true;
                 }
-                else if (this->inputs_function[index_of_cursor][0] == "InputField")
+                else if (funct == "InputField")
                 {
                     Serial.println((this->inputs_function[index_of_cursor][1]).c_str());
                     this->input_fields[this->inputs_function[index_of_cursor][1]] = this->write(this->input_fields[this->inputs_function[index_of_cursor][1]]);
+                    is_valid = true;
                 }
-                else if (this->inputs_function[index_of_cursor][0] == "add_account")
+                else if (funct == "add_account")
                 {
                 }
-                else if (this->inputs_function[index_of_cursor][0] == "deleteAccount")
+                else if (funct == "deleteAccount")
                 {
                 }
-                else if (this->inputs_function[index_of_cursor][0] == "login")
+                else if (funct == "login")
                 {
                 }
-                else if (this->inputs_function[index_of_cursor][0] == "logoff")
+                else if (funct == "logoff")
                 {
                 }
-                else if (this->inputs_function[index_of_cursor][0] == "setAccountPassword")
+                else if (funct == "setAccountPassword")
                 {
                 }
-                else if (this->inputs_function[index_of_cursor][0] == "setAccountUsername")
+                else if (funct == "setAccountUsername")
                 {
                 }
-                else if (this->inputs_function[index_of_cursor][0] == "sendToComputer")
+                else if (funct == "sendToComputer")
                 {
                 }
-                else if (this->inputs_function[index_of_cursor][0] == "switch_ServerStatus")
+                else if (funct == "switch_ServerStatus")
                 {
                 }
-                if (is_valid == true)
+                if (is_valid == true && this->inputs_link[index_of_cursor] != "None")
                 {
                     this->current_menu = this->inputs_link[index_of_cursor];
                     this->load_menu(this->inputs_link[index_of_cursor]);
@@ -421,7 +424,11 @@ std::string Controller::write(std::string str)
     }
 
     bool has_finished = false;
+    bool new_char = false;
     int input;
+
+    this->menu_lines[this->cursor_position] = this->keyboard->get_display(&keyboard_cursor, &word_display, &word, &new_char);
+    this->update_display();
 
     while (has_finished == false)
     {
@@ -436,29 +443,55 @@ std::string Controller::write(std::string str)
                 {
                 case Direction::LEFT:
                     this->keyboard->left(&keyboard_cursor, &word_display);
+                    if (new_char == true)
+                    {
+                        new_char = false;
+                    }
                     break;
 
                 case Direction::RIGHT:
                     this->keyboard->right(&keyboard_cursor, &word_display, &word);
+                    if (keyboard_cursor == word.size() && new_char == false)
+                    {
+                        new_char = true;
+                    }
                     break;
 
                 case Direction::UP:
-                    this->keyboard->up(&keyboard_cursor, &word);
+                    if (new_char == true)
+                    {
+                        new_char = false;
+                        this->keyboard->add(&word, &word_display);
+                    }
+                    else
+                    {
+                        this->keyboard->up(&keyboard_cursor, &word);
+                    }
                     break;
 
                 case Direction::DOWN:
-                    this->keyboard->down(&keyboard_cursor, &word);
+                    if (new_char == true)
+                    {
+                        new_char = false;
+                        this->keyboard->add(&word, &word_display);
+                    }
+                    else
+                    {
+                        this->keyboard->down(&keyboard_cursor, &word);
+                    }
                     break;
 
                 case Direction::OKAY:
-                    this->keyboard->del(&keyboard_cursor, &word_display, &word);
+                    has_finished = true;
                     break;
 
                 case Direction::BACK:
-                    has_finished = true;
+                    this->keyboard->del(&keyboard_cursor, &word_display, &word);
                     break;
                 }
-                Serial.println(has_finished);
+                this->menu_lines[this->cursor_position] = this->keyboard->get_display(&keyboard_cursor, &word_display, &word, &new_char);
+                this->update_display();
+
                 Serial.print("CURSOR: ");
                 Serial.println(keyboard_cursor);
                 Serial.print("WORD: ");
@@ -475,7 +508,6 @@ std::string Controller::write(std::string str)
                     Serial.print("-");
                 }
                 Serial.println("");
-                Serial.println("");
             }
         }
         delay(50);
@@ -486,6 +518,8 @@ std::string Controller::write(std::string str)
     {
         ret += word[i];
     }
+    this->menu_lines[this->cursor_position] = ret;
+    this->update_display();
     return ret;
 }
 
@@ -502,33 +536,27 @@ void Controller::update()
             case Direction::UP:
                 this->scroll(1);
                 Serial.println("UP");
-                Serial.print("CURSOR:");
-                Serial.println(this->cursor_position);
                 this->update_display();
                 break;
 
             case Direction::DOWN:
                 this->scroll(-1);
                 Serial.println("DOWN");
-                Serial.print("CURSOR:");
-                Serial.println(this->cursor_position);
                 this->update_display();
                 break;
 
             case Direction::OKAY:
                 Serial.println("OK");
-                Serial.print("CURSOR:");
-                Serial.println(this->cursor_position);
                 this->select_choice();
                 break;
 
             case Direction::BACK:
                 Serial.println("BACK");
-                Serial.print("CURSOR:");
-                Serial.println(this->cursor_position);
                 this->go_back();
                 break;
             }
+            Serial.print("CURSOR:");
+            Serial.println(this->cursor_position);
         }
     }
 }
