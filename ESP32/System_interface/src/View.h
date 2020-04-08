@@ -1,16 +1,25 @@
 #include "Screen.h"
 
-#define NUM_LINE 4
-#define NUM_COL 21
+class View
+{
+private:
+    Screen *screen;                 //Screen OBJECT
+    char buffer[NUM_LINE][NUM_COL]; //BUFFER OF THE CONTENT TO DISPLAY
 
-class View{
-    private:
-    Screen *screen;
-    char buffer[NUM_LINE][NUM_COL]; //Buffer of the content to display
+public:
+    /** 
+     * @Desc:  Constructor
+     * @Params:  none
+     * @Returns:  none
+     */
+    View();
 
-    public:
-    View(); //Constructor
-    ~View(); //Destructor
+    /** 
+     * @Desc:  Destructor
+     * @Params:  none
+     * @Returns:  none
+     */
+    ~View();
 
     /** 
      * @Desc:  Clear the display of the screen
@@ -28,17 +37,17 @@ class View{
 
     /** 
      * @Desc:  Add a string to the buffer at the designated coordinates (start at (0,0))
-     * @Params:  (std::string, int, int)
+     * @Params:  String to draw, Number of the line, Number of the column
      * @Returns:  none
      */
-    void draw_text(std::string txt, int line=0, int col=0);
+    void draw_text(std::string txt, int line = 0, int col = 0);
 
     /** 
      * @Desc:  Add a character to the buffer at the designated coordinates (start at (0,0))
-     * @Params:  (char, int, int)
+     * @Params:  Character to draw, Number of the line, Number of the column
      * @Returns:  none
      */
-    void draw_char(char a, int line=0, int col=0);
+    void draw_char(char a, int line = 0, int col = 0);
 
     /** 
      * @Desc:  Clear the content of the buffer

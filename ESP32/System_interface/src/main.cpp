@@ -5,16 +5,17 @@ Controller *controller;
 //DESCRIPTION: initialize the serial communications
 //PARAMS: none
 //RETURN VALUE: none
-void setup() {
+void setup()
+{
   Serial.begin(115200);
   controller = new Controller();
-  
 }
 
 //DESCRIPTION: main loop to update the interface
 //PARAMS: none
 //RETURN VALUE: none
-void loop() {
+void loop()
+{
   controller->update();
   delay(50);
 }
