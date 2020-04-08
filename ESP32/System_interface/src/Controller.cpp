@@ -1,5 +1,8 @@
 #include "Controller.h"
 
+//UNCOMMENT THIS TO ACTIVATE THE DEBUG MODE
+//#define DEBUG_MODE
+
 //MENU FILE NAMES
 std::vector<std::string> filenames = {
     "Welcome_menu",      //0
@@ -50,6 +53,9 @@ Controller::Controller()
 
     //LOADING THE WELCOME MENU AND INITIALIZING THE BUFFER OF THE MENU
     this->load_menu(filenames[0]);
+#ifdef DEBUG_MODE
+    Serial.println("");
+#endif
     this->current_menu = filenames[0];
     this->init_buffer();
 }
@@ -247,12 +253,52 @@ void Controller::load_menu(std::string menu_name)
             break;
         }
     }
+#ifdef DEBUG_MODE
+    Serial.print("[MENU_LINES]: [");
+    Serial.print(0);
+    for (int i = 1; i < this->menu_lines.size(); i++)
+    {
+        Serial.print(", ");
+        Serial.print(i);
+    }
+    Serial.println("]");
+
+    Serial.print("[MENU_ENTRIES]: [");
+    Serial.print(this->line_number_of_choices[0]);
+    for (int i = 1; i < this->line_number_of_choices.size(); i++)
+    {
+        Serial.print(", ");
+        Serial.print(this->line_number_of_choices[i]);
+    }
+    Serial.println("]");
+
+    Serial.print("[ENTRIES_LINK]: [");
+    Serial.print(this->inputs_link[0].c_str());
+    for (int i = 1; i < this->inputs_link.size(); i++)
+    {
+        Serial.print(", ");
+        Serial.print(this->inputs_link[i].c_str());
+    }
+    Serial.println("]");
+
+    Serial.print("[ENTRIES_FUNCTION]: [");
+    Serial.print(this->inputs_function[0][0].c_str());
+    for (int i = 1; i < this->inputs_function.size(); i++)
+    {
+        Serial.print(", ");
+        Serial.print(this->inputs_function[i][0].c_str());
+    }
+    Serial.println("]");
+#endif
 }
 
 void Controller::scroll(int a)
 {
     if (a == 1) //SCROLLING UP
     {
+#ifdef DEBUG_MODE
+        Serial.println("SCROLL UP");
+#endif
         if (this->cursor_position != this->buffer[0]) //THE CURSOR IS NOT AT THE TOP OF THE MENU BUFFER
         {
             std::vector<int>::iterator it = std::find(this->buffer.begin(), this->buffer.end(), this->cursor_position);
@@ -290,6 +336,9 @@ void Controller::scroll(int a)
     }
     else //SCROLLING DOWN
     {
+#ifdef DEBUG_MODE
+        Serial.println("SCROLL DOWN");
+#endif
         if (this->cursor_position != this->buffer[this->buffer.size() - 1]) //THE CURSOR IS NOT AT THE BOTTOM OF THE BUFFER
         {
             std::vector<int>::iterator it = std::find(this->buffer.begin(), this->buffer.end(), this->cursor_position);
@@ -325,6 +374,15 @@ void Controller::scroll(int a)
             }
         }
     }
+#ifdef DEBUG_MODE
+    Serial.print("MENU BUFFER: -");
+    for (int i = 0; i < this->buffer.size(); i++)
+    {
+        Serial.print(i);
+        Serial.print("-");
+    }
+    Serial.println("");
+#endif
 }
 
 void Controller::update_display()
@@ -362,6 +420,9 @@ void Controller::select_choice()
         {
             if (std::binary_search(this->line_number_of_choices.begin(), this->line_number_of_choices.end(), this->buffer[i]) == true) //THE CURSOR IS ON AN ENTRY
             {
+#ifdef DEBUG_MODE
+                Serial.println("THE CURSOR IS ON AN ENTRY");
+#endif
 
                 bool is_valid = false; //SUCCESSFUL EXECUTION OF THE ACTIVATION FUNCTIONS ?
                 std::vector<int>::iterator it = std::find(this->line_number_of_choices.begin(), this->line_number_of_choices.end(), this->cursor_position);
@@ -369,13 +430,21 @@ void Controller::select_choice()
 
                 std::string funct = this->inputs_function[index_of_cursor][0]; //ACTIVATION FUNCTION OF THE ENTRY (IT CAN BE "None")
 
+#ifdef DEBUG_MODE
+                Serial.print("[ENTRY_FUNCTION]: ");
+                Serial.println(funct.c_str());
+#endif
+
                 if (funct == "None")
                 {
                     is_valid = true;
                 }
                 else if (funct == "InputField")
                 {
+#ifdef DEBUG_MODE
+                    Serial.print("[INPUT_FIELD]: ");
                     Serial.println((this->inputs_function[index_of_cursor][1]).c_str());
+#endif
                     this->input_fields[this->inputs_function[index_of_cursor][1]] = this->write(this->input_fields[this->inputs_function[index_of_cursor][1]]);
                     is_valid = true;
                 }
@@ -405,14 +474,26 @@ void Controller::select_choice()
                 }
                 if (is_valid == true && this->inputs_link[index_of_cursor] != "None") //LOADING THE NEW MENU
                 {
+#ifdef DEBUG_MODE
+                    Serial.println("ENTRY FUNCTION VALIDATED");
+                    Serial.print("[CURRENT_MENU]: ");
+                    Serial.println(this->current_menu.c_str());
+                    Serial.print("[NEW_MENU]: ");
+                    Serial.println(this->inputs_link[index_of_cursor].c_str());
+#endif
                     this->current_menu = this->inputs_link[index_of_cursor];
                     this->load_menu(this->inputs_link[index_of_cursor]);
                     this->init_buffer();
                 }
                 break;
             }
+            else
+            {
+#ifdef DEBUG_MODE
+                Serial.println("THE CURSOR IS NOT ON AN ENTRY");
+#endif
+            }
         }
-        break;
     }
 }
 
@@ -420,6 +501,13 @@ void Controller::go_back()
 {
     std::vector<std::string>::iterator it = std::find(filenames.begin(), filenames.end(), this->current_menu);
     int index_of_filename = std::distance(filenames.begin(), it); //INDEX OF THE MENU IN THE FILENAMES (from 0 to 12)
+
+#ifdef DEBUG_MODE
+    Serial.print("[CURRENT_MENU]: ");
+    Serial.println(this->current_menu.c_str());
+    Serial.print("[NEW_MENU]: ");
+    Serial.println(filenames[previous_menu[index_of_filename]].c_str());
+#endif
 
     this->current_menu = filenames[previous_menu[index_of_filename]];
     this->load_menu(filenames[previous_menu[index_of_filename]]); //LOAD THE LAST MENU
@@ -533,21 +621,27 @@ std::string Controller::write(std::string str)
                 this->menu_lines[this->cursor_position] = this->keyboard->get_display(&keyboard_cursor, &word_display, &word, &new_char);
                 this->update_display();
 
-                Serial.print("CURSOR: ");
+#ifdef DEBUG_MODE
+                Serial.println("");
+                Serial.print("[KEYBOARD_CURSOR]: ");
                 Serial.println(keyboard_cursor);
-                Serial.print("WORD: ");
-                for (int s = 0; s < word.size(); s++)
+                Serial.print("[INPUT FIELD]: [");
+                Serial.print(word[0]);
+                for (int s = 1; s < word.size(); s++)
                 {
+                    Serial.print(", ");
                     Serial.print(word[s]);
                 }
-                Serial.println("");
-                Serial.print("BUFFER: ");
-                for (int s = 0; s < word_display.size(); s++)
+                Serial.println("]");
+                Serial.print("[BUFFER]: [");
+                Serial.print(word_display[0]);
+                for (int s = 1; s < word_display.size(); s++)
                 {
+                    Serial.print(", ");
                     Serial.print(word_display[s]);
-                    Serial.print("-");
                 }
-                Serial.println("");
+                Serial.println("]");
+#endif
             }
         }
         delay(50);
@@ -577,29 +671,40 @@ void Controller::update()
             switch (input)
             {
             case Direction::UP:
+#ifdef DEBUG_MODE
+                Serial.println("[INPUT]: UP");
+#endif
                 this->scroll(1);
-                Serial.println("UP");
                 this->update_display();
                 break;
 
             case Direction::DOWN:
+#ifdef DEBUG_MODE
+                Serial.println("[INPUT]: DOWN");
+#endif
                 this->scroll(-1);
-                Serial.println("DOWN");
                 this->update_display();
                 break;
 
             case Direction::OKAY:
-                Serial.println("OK");
+#ifdef DEBUG_MODE
+                Serial.println("[INPUT]: OK");
+#endif
                 this->select_choice();
                 break;
 
             case Direction::BACK:
-                Serial.println("BACK");
+#ifdef DEBUG_MODE
+                Serial.println("[INPUT]: BACK");
+#endif
                 this->go_back();
                 break;
             }
-            Serial.print("CURSOR:");
+#ifdef DEBUG_MODE
+            Serial.print("[MENU_CURSOR]: ");
             Serial.println(this->cursor_position);
+            Serial.println("");
+#endif
         }
     }
 }
