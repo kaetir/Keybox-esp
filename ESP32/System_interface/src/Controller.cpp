@@ -17,7 +17,8 @@ std::vector<std::string> filenames = {
     "Send_to_computer",  //9
     "Modify_account",    //10
     "New_password",      //11
-    "New_username"       //12
+    "New_username",      //12
+    "Lang_option"        //13
 };
 
 //PREVIOUS MENU INDEX
@@ -34,7 +35,12 @@ int previous_menu[] = {
     7,  //Send_to_computer
     7,  //Modify_account
     10, //New_password
-    10  //New_username
+    10, //New_username
+    2,  //Lang_option
+};
+
+std::vector<std::string> Lang = {
+    "FR" //FRENCH
 };
 
 Controller::Controller()
@@ -50,14 +56,41 @@ Controller::Controller()
     {
         Serial.println("SPIFFS Mount Failed");
     }
+    else
+    {
 
-    //LOADING THE WELCOME MENU AND INITIALIZING THE BUFFER OF THE MENU
-    this->load_menu(filenames[0]);
+        std::vector<std::string> conf = this->model->get_config(this->spf);
+        if (conf.size() == 0)
+        {
+            this->first_boot = true;
+            this->menu_lines.push_back("LANGUAGE:");
+
+            std::vector<std::string> tmp_vect;
+            for (int i = 0; i < Lang.size(); i++)
+            {
+                this->menu_lines.push_back(Lang[i]);
+                this->line_number_of_choices.push_back(this->menu_lines.size() - 1);
+
+                tmp_vect = {"First_boot", Lang[i]};
+                this->inputs_function.push_back(tmp_vect);
+                this->inputs_link.push_back(filenames[0]);
+            }
+            this->current_menu = "First_Boot";
+        }
+        else
+        {
+            this->first_boot = false;
+            this->language = conf[0];
+
+            //LOADING THE WELCOME MENU AND INITIALIZING THE BUFFER OF THE MENU
+            this->load_menu(filenames[0]);
 #ifdef DEBUG_MODE
-    Serial.println("");
+            Serial.println("");
 #endif
-    this->current_menu = filenames[0];
-    this->init_buffer();
+            this->current_menu = filenames[0];
+        }
+        this->init_buffer();
+    }
 }
 
 Controller::~Controller()
@@ -110,10 +143,10 @@ void Controller::load_menu(std::string menu_name)
     this->input_fields.clear();
 
     //FILLING THE MENU LINES WITH THE NEW ONES
-    this->menu_lines = this->model->read(this->spf, menu_name, "txt");
+    this->menu_lines = this->model->read(this->spf, menu_name, "txt", this->language);
 
     //GETTING THE MENU STRUCTURE
-    std::vector<std::string> struct_tmp = this->model->read(this->spf, menu_name, "struct");
+    std::vector<std::string> struct_tmp = this->model->read(this->spf, menu_name, "struct", this->language);
     std::vector<std::string> tmp_vect;
 
     int num;
@@ -197,6 +230,12 @@ void Controller::load_menu(std::string menu_name)
             else if (funct == "switch_ServerStatus") //switch_ServerStatus()
             {
                 tmp_vect = {funct};
+                this->inputs_function.push_back(tmp_vect);
+            }
+            else if (funct == "set_Lang")
+            {
+                ss >> arg1;
+                tmp_vect = {funct, arg1};
                 this->inputs_function.push_back(tmp_vect);
             }
             break;
@@ -472,6 +511,21 @@ void Controller::select_choice()
                 else if (funct == "switch_ServerStatus")
                 {
                 }
+                else if (funct == "First_boot")
+                {
+                    this->first_boot = false;
+                    this->language = this->inputs_function[index_of_cursor][1];
+                    this->model->set_config(this->spf, this->language);
+
+                    is_valid = true;
+                }
+                else if (funct == "set_Lang")
+                {
+                    this->language = this->inputs_function[index_of_cursor][1];
+                    this->model->set_config(this->spf, this->language);
+
+                    is_valid = true;
+                }
                 if (is_valid == true && this->inputs_link[index_of_cursor] != "None") //LOADING THE NEW MENU
                 {
 #ifdef DEBUG_MODE
@@ -534,7 +588,7 @@ std::string Controller::write(std::string str)
     {
         for (int i = 0; i < str.size(); i++)
         {
-            if (i < FIELD_WIDTH) //NUMBER OF COLUMN - THE SIZE OF THE MENU CURSOR - THE SIZE OF THE KEYBOARD CURSOR
+            if (i < WIDTH) //NUMBER OF COLUMN - THE SIZE OF THE MENU CURSOR - THE SIZE OF THE KEYBOARD CURSOR
             {
                 word_display.push_back(i);
             }
@@ -694,10 +748,13 @@ void Controller::update()
                 break;
 
             case Direction::BACK:
+                if (this->first_boot == false)
+                {
 #ifdef DEBUG_MODE
-                Serial.println("[INPUT]: BACK");
+                    Serial.println("[INPUT]: BACK");
 #endif
-                this->go_back();
+                    this->go_back();
+                }
                 break;
             }
 #ifdef DEBUG_MODE

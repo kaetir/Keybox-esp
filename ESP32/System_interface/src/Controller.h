@@ -27,6 +27,8 @@ private:
     std::vector<std::vector<std::string>> inputs_function; //NAME OF THE FUNCTIONS AND ARGUMENT FOR EACH CHOICE (IT CAN BE "NONE")
     std::vector<std::string> inputs_link;                  //NAME OF THE MENU TO SWITCH TO
     std::map<std::string, std::string> input_fields;       //LIST OF THE INPUT FIELDS IN THE MENU
+    std::string language;                                  //LANGUAGE OF THE USER
+    bool first_boot;
 
     /** 
      * @Desc:  Update the display of the menu
