@@ -73,7 +73,7 @@ Keyboard::~Keyboard()
 
 void Keyboard::add(std::vector<char> *word, std::vector<int> *buffer)
 {
-    if (buffer->size() < WIDTH) //INPUT FIELD BUFFER SIZE < DISPLAY SIZE (WIDTH)
+    if (buffer->size() < FIELD_WIDTH) //INPUT FIELD BUFFER SIZE < DISPLAY SIZE (WIDTH)
     {
         buffer->push_back(buffer->size());
     }
@@ -170,7 +170,7 @@ void Keyboard::down(int *cursor_pos, std::vector<char> *word)
 std::string Keyboard::get_display(int *cursor_pos, std::vector<int> *buffer, std::vector<char> *word, bool *new_char)
 {
     std::string ret = "";
-    if (buffer->size() < WIDTH) //KEYBOARD BUFFER < SIZE OF THE DISPLAY
+    if (buffer->size() < FIELD_WIDTH) //KEYBOARD BUFFER < SIZE OF THE DISPLAY
     {
         if (*new_char == true) //KEYBOARD CURSOR POINTING TO AN EMPTY CHARACTER (NOT CREATED YET)
         {

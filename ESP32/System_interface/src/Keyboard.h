@@ -4,7 +4,7 @@
 #include <iterator>
 #include <algorithm>
 
-#define WIDTH 17 //NUMBER OF COLUMNS - SIZE OF THE MENU CURSOR - SIZE OF THE KEYBOARD CURSOR
+#define FIELD_WIDTH 17 //NUMBER OF COLUMNS - SIZE OF THE MENU CURSOR - SIZE OF THE KEYBOARD CURSOR
 
 class Keyboard
 {

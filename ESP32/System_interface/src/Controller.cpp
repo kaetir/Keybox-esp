@@ -534,7 +534,7 @@ std::string Controller::write(std::string str)
     {
         for (int i = 0; i < str.size(); i++)
         {
-            if (i < WIDTH) //NUMBER OF COLUMN - THE SIZE OF THE MENU CURSOR - THE SIZE OF THE KEYBOARD CURSOR
+            if (i < FIELD_WIDTH) //NUMBER OF COLUMN - THE SIZE OF THE MENU CURSOR - THE SIZE OF THE KEYBOARD CURSOR
             {
                 word_display.push_back(i);
             }
