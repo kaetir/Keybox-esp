@@ -1,4 +1,0 @@
-Modifier?
-Nom d'utilisateur
-Mot de passe
-Retour
