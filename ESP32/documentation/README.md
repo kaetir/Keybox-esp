@@ -6,34 +6,33 @@
 
 ### - Left:
 
-<img src="/images/left.png">
-
+![LEFT](images/left.png)
 
 
 ### - Right:
 
-![alt text](https://github.com/kaetir/Keybox-esp/tree/master/ESP32/documentation/images/right.png "Right")
+![RIGHT](images/right.png)
 
 
 
 ### - Up:
 
-![alt text](https://github.com/kaetir/Keybox-esp/tree/master/ESP32/documentation/images/up.png "Up")
+![UP](images/up.png)
 
 
 
 ### - Down:
 
-![alt text](https://github.com/kaetir/Keybox-esp/tree/master/ESP32/documentation/images/down.png "Down")
+![DOWN](images/down.png)
 
 
 
 ### - Ok:
 
-![alt text](https://github.com/kaetir/Keybox-esp/tree/master/ESP32/documentation/images/ok.png "Ok")
+![UP](images/ok.png)
 
 
 
 ### - Back:
 
-![alt text](https://github.com/kaetir/Keybox-esp/tree/master/ESP32/documentation/images/back.png "Back")
+![BACK](images/back.png)
