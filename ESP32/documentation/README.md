@@ -6,8 +6,7 @@
 
 ### - Left:
 
-![alt text](https://github.com/kaetir/Keybox-esp/tree/master/ESP32/documentation/images/left.png "Left")
-
+<img src="https://github.com/kaetir/Keybox-esp/tree/master/ESP32/documentation/images/left.png">
 
 
 
