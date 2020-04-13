@@ -1,8 +1,0 @@
-0 t
-1 t
-2 < name
-3 t
-4 < username
-5 t
-6 < password
-7 f Accounts_menu add_account name username password

@@ -1,5 +1,0 @@
-0 t
-1 t
-2 < username
-3 f Display_account setAccountUsername username
-4 > Display_account
