@@ -54,3 +54,5 @@ out/
 .pio
 
 # End of https://www.gitignore.io/api/code,kicad,platformio
+
+Web/Web_server_KeyBox/src/creditential.h
