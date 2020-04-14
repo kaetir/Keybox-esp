@@ -15,37 +15,29 @@ private:
 
 public:
     /** 
-     * @Desc:  Constructor
-     * @Params:  none
-     * @Returns:  none
+     * @brief  Constructor
      */
     Screen();
 
     /** 
-     * @Desc:  Destructor
-     * @Params:  none
-     * @Returns:  none
+     * @brief  Destructor
      */
     ~Screen();
 
     /** 
-     * @Desc:  Clear up the screen
-     * @Params:  none
-     * @Returns:  none
+     * @brief  Clear up the screen
      */
     void clear();
 
     /** 
-     * @Desc:  Set a string on a line
-     * @Params:  The string to set, the number of the line (start at 0)
-     * @Returns:  none
+     * @brief  Set a string on a line
+     * @param str  String to set
+     * @param line Number of the line (start at 0)
      */
     void setLine(std::string str, int line = 0);
 
     /** 
-     * @Desc:  Display the content of the screen
-     * @Params:  none
-     * @Returns:  none
+     * @brief  Display the content of the screen
      */
     void show();
 };

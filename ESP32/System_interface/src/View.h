@@ -8,51 +8,43 @@ private:
 
 public:
     /** 
-     * @Desc:  Constructor
-     * @Params:  none
-     * @Returns:  none
+     * @brief  Constructor
      */
     View();
 
     /** 
-     * @Desc:  Destructor
-     * @Params:  none
-     * @Returns:  none
+     * @brief  Destructor
      */
     ~View();
 
     /** 
-     * @Desc:  Clear the display of the screen
-     * @Params:  none
-     * @Returns:  none
+     * @brief  Clear the display of the screen
      */
     void clear();
 
     /** 
-     * @Desc:  Display the content of the buffer on the screen
-     * @Params:  none
-     * @Returns:  none
+     * @brief  Display the content of the buffer on the screen
      */
     void show();
 
     /** 
-     * @Desc:  Add a string to the buffer at the designated coordinates (start at (0,0))
-     * @Params:  String to draw, Number of the line, Number of the column
-     * @Returns:  none
+     * @brief  Add a string to the buffer at the designated coordinates
+     * @param txt String to add to the buffer
+     * @param line Number of the line (start at 0)
+     * @param col Number of the column (start at 0)
      */
     void draw_text(std::string txt, int line = 0, int col = 0);
 
     /** 
-     * @Desc:  Add a character to the buffer at the designated coordinates (start at (0,0))
-     * @Params:  Character to draw, Number of the line, Number of the column
-     * @Returns:  none
+     * @brief  Add a character to the buffer at the designated coordinates
+     * @param a Character to add to the buffer
+     * @param line Number of the line (start at 0)
+     * @param col Number of the column (start at 0)
      */
     void draw_char(char a, int line = 0, int col = 0);
 
     /** 
-     * @Desc:  Clear the content of the buffer
-     * @Params:  none
-     * @Returns:  none
+     * @brief  Clear the content of the buffer
      */
     void clear_buffer();
 };

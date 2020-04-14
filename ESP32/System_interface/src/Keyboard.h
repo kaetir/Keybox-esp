@@ -13,65 +13,66 @@ public:
     std::vector<char> Alphabet;
 
     /** 
-     * @Desc:  Constructor
-     * @Params:  none
-     * @Returns:  none
+     * @brief  Constructor
      */
     Keyboard();
 
     /** 
-     * @Desc:  Destructor
-     * @Params:  none
-     * @Returns:  none
+     * @brief  Destructor
      */
     ~Keyboard();
 
     /** 
-     * @Desc:  Modify the selected character by moving up in the Alphabet
-     * @Params:  Pointer to the keyboard cursor, Pointer to the input field content
-     * @Returns:  none
+     * @brief  Modify the selected character by moving up in the Alphabet
+     * @param cursor_pos  Pointer to the keyboard cursor
+     * @param word Pointer to the input field content
      */
     void up(int *cursor_pos, std::vector<char> *word);
 
     /** 
-     * @Desc:  Modify the selected character by moving down in the Alphabet
-     * @Params:  Pointer to the keyboard cursor, Pointer to the input field content
-     * @Returns:  none
+     * @brief  Modify the selected character by moving down in the Alphabet
+     * @param cursor_pos  Pointer to the keyboard cursor
+     * @param word Pointer to the input field content
      */
     void down(int *cursor_pos, std::vector<char> *word);
 
     /** 
-     * @Desc:  Select the character of the left(if there is one) of the currently selected character
-     * @Params:  Pointer to the keyboard cursor, Pointer to the input field buffer
-     * @Returns:  none
+     * @brief  Select the character of the left(if there is one) of the currently selected character
+     * @param cursor_pos  Pointer to the keyboard cursor
+     * @param buffer  Pointer to the input field display buffer
      */
     void left(int *cursor_pos, std::vector<int> *buffer);
 
     /** 
-     * @Desc:  Select the character of the right(if there is one) of the currently selected character
-     * @Params:  Pointer to the keyboard cursor, Pointer to the input field buffer, Pointer to the input field content
-     * @Returns:  none
+     * @brief  Select the character of the right(if there is one) of the currently selected character
+     * @param cursor_pos  Pointer to the keyboard cursor
+     * @param buffer  Pointer to the input field display buffer
+     * @param word Pointer to the input field content
      */
     void right(int *cursor_pos, std::vector<int> *buffer, std::vector<char> *word);
 
     /** 
-     * @Desc:  Delete the selected character
-     * @Params:  Pointer to the keyboard cursor, Pointer to the input field buffer, Pointer to the input field content
-     * @Returns:  none
+     * @brief  Delete the selected character
+     * @param cursor_pos  Pointer to the keyboard cursor
+     * @param buffer  Pointer to the input field display buffer
+     * @param word Pointer to the input field content
      */
     void del(int *cursor_pos, std::vector<int> *buffer, std::vector<char> *word);
 
     /** 
-     * @Desc:  Append a new character at the end of the input field content
-     * @Params:  Pointer to the input field content, Pointer to the input field buffer
-     * @Returns:  none
+     * @brief  Append a new character at the end of the input field content
+     * @param word Pointer to the input field content
+     * @param buffer  Pointer to the input field display buffer
      */
     void add(std::vector<char> *word, std::vector<int> *buffer);
 
     /** 
-     * @Desc:  Append a new character at the end of the input field content
-     * @Params:  Pointer to the keyboard cursor, Pointer to the input field buffer, Pointer to the input field content, Pointer to the New character? boolean
-     * @Returns:  String to display on the input field line
+     * @brief  Append a new character at the end of the input field content
+     * @param cursor_pos  Pointer to the keyboard cursor
+     * @param buffer  Pointer to the input field display buffer
+     * @param word Pointer to the input field content
+     * @param new_char Pointer to the boolean (Is the keyboard cursor at a new character ?)
+     * @return  String to display on the input field line
      */
     std::string get_display(int *cursor_pos, std::vector<int> *buffer, std::vector<char> *word, bool *new_char);
 };

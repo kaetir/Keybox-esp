@@ -19,30 +19,24 @@ class Inputs
 private:
 public:
     /** 
-     * @Desc:  Constructor
-     * @Params:  none
-     * @Returns:  none
+     * @brief  Constructor
      */
     Inputs();
 
     /** 
-     * @Desc:  Destructor
-     * @Params:  none
-     * @Returns:  none
+     * @brief  Destructor
      */
     ~Inputs();
 
     /** 
-     * @Desc:  Check if an input was detected
-     * @Params:  none
-     * @Returns:  True or False if there is an input or not
+     * @brief  Check if an input was detected
+     * @return  True or False if there is an input or not
      */
     bool has_input();
 
     /** 
-     * @Desc:  Get the input from the user
-     * @Params:  none
-     * @Returns:  Return an integer corresponding to an input (enum Direction)
+     * @brief  Get the input from the user
+     * @return  An integer corresponding to the input used (enum Direction)
      */
     int get_input();
 };
