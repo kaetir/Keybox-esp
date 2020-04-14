@@ -28,7 +28,8 @@ private:
     std::vector<std::string> inputs_link;                  //NAME OF THE MENU TO SWITCH TO
     std::map<std::string, std::string> input_fields;       //LIST OF THE INPUT FIELDS IN THE MENU
     std::string language;                                  //LANGUAGE OF THE USER
-    bool first_boot;
+    bool first_boot;                                       //HAS THIS MACHINE EVER BOOTED?
+    int selected_wifi;                                     //INDEX OF THE SELECTED WIFI IN THE WIFI LIST
 
     /** 
      * @brief  Update the display of the menu

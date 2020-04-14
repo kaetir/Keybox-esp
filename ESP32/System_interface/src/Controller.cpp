@@ -18,7 +18,9 @@ std::vector<std::string> filenames = {
     "Modify_account",    //10
     "New_password",      //11
     "New_username",      //12
-    "Lang_option"        //13
+    "Lang_option",       //13
+    "Wifi_list",         //14
+    "Wifi_connect"       //15
 };
 
 //PREVIOUS MENU INDEX
@@ -37,6 +39,8 @@ int previous_menu[] = {
     10, //New_password
     10, //New_username
     2,  //Lang_option
+    3,  //Wifi_list
+    14  //Wifi_connect
 };
 
 std::vector<std::string> Lang = {
@@ -238,6 +242,12 @@ void Controller::load_menu(std::string menu_name)
                 tmp_vect = {funct, arg1};
                 this->inputs_function.push_back(tmp_vect);
             }
+            else if (funct == "connect")
+            {
+                ss >> arg1;
+                tmp_vect = {funct, arg1};
+                this->inputs_function.push_back(tmp_vect);
+            }
             break;
 
         case 'g': //GET FUNCTIONS
@@ -258,6 +268,27 @@ void Controller::load_menu(std::string menu_name)
                     this->inputs_function.push_back(tmp_vect);
                     this->inputs_link.push_back("Display_account");
                 }
+            }
+            else if (funct == "get_Wifi_list") //DISPLAY THE LIST OF WIFI AVAILABLE
+            {
+                std::vector<std::string> wifi_list = this->model->getWifis();
+
+                for (int j = 0; j < wifi_list.size(); j++)
+                {
+                    this->menu_lines.push_back(wifi_list[j]);
+                    this->line_number_of_choices.push_back(menu_lines.size() - 1);
+
+                    std::stringstream int_to_string;
+                    int_to_string << j;
+
+                    tmp_vect = {"selectWifi", int_to_string.str()};
+                    this->inputs_function.push_back(tmp_vect);
+                    this->inputs_link.push_back("Wifi_connect");
+                }
+            }
+            else if (funct == "get_Wifi_SSID") //Get the SSID of the selected Wifi
+            {
+                this->menu_lines[num] = this->model->getSSID(this->selected_wifi);
             }
             else if (funct == "getAccountName") //DISPLAY THE SELECTED ACCOUNT NAME
             {
@@ -480,6 +511,11 @@ void Controller::select_choice()
                     this->input_fields[this->inputs_function[index_of_cursor][1]] = this->write(this->input_fields[this->inputs_function[index_of_cursor][1]]);
                     is_valid = true;
                 }
+                else if (funct == "selectAccount")
+                {
+                    std::istringstream(this->inputs_function[index_of_cursor][1]) >> this->selected_account;
+                    is_valid = true;
+                }
                 else if (funct == "add_account")
                 {
                 }
@@ -517,6 +553,18 @@ void Controller::select_choice()
                     this->language = this->inputs_function[index_of_cursor][1];
                     this->model->set_config(this->spf, this->language);
 
+                    is_valid = true;
+                }
+                else if (funct == "connect")
+                {
+                    if (this->model->connect_wifi(this->selected_wifi, this->input_fields[this->inputs_function[index_of_cursor][1]]) == true)
+                    {
+                        is_valid = true;
+                    }
+                }
+                else if (funct == "selectWifi")
+                {
+                    std::istringstream(this->inputs_function[index_of_cursor][1]) >> this->selected_wifi;
                     is_valid = true;
                 }
                 if (is_valid == true && this->inputs_link[index_of_cursor] != "None") //LOADING THE NEW MENU

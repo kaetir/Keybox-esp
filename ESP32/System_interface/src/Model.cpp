@@ -115,3 +115,20 @@ void Model::set_config(fs::FS &fs, std::string txt)
     file.close();
   }
 }
+
+std::string Model::getSSID(int index)
+{
+  std::string ret;
+  return ret;
+}
+
+std::vector<std::string> Model::getWifis()
+{
+  std::vector<std::string> ret;
+  return ret;
+}
+
+bool Model::connect_wifi(int index, std::string password)
+{
+  return false;
+}
