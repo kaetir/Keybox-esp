@@ -17,6 +17,8 @@ Modify_account : Modify the account informations
 New_username : New Username
 New_password : New Password
 Language : Choose your Language
+connect_wifi : Connect to the selected Wifi
+wifi_list : List of all wifi available
 
 Setup --> Welcome_menu
 Welcome_menu --> Login
@@ -36,5 +38,8 @@ Modify_account --> New_username
 Modify_account --> New_password
 New_username --> Display_account
 New_password --> Display_account
+Web_server --> wifi_list
+wifi_list --> connect_wifi
+connect_wifi --> Web_server
 ```
 
