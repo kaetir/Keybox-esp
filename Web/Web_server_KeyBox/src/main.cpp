@@ -68,7 +68,6 @@ HTTPSServer secureServer = HTTPSServer(&cert);
 
 // Declare some handler functions for the various URLs on the server
 void handleRoot(HTTPRequest* req, HTTPResponse* res);
-void handle404(HTTPRequest* req, HTTPResponse* res);
 void handleRessources(HTTPRequest* req, HTTPResponse* res);
 void handleSPIFFS(HTTPRequest* req, HTTPResponse* res);
 
