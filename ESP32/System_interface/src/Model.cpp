@@ -27,7 +27,18 @@ std::vector<std::string> Model::read(fs::FS &fs, std::string filename, std::stri
   File file = fs.open(path);
   if (!file || file.isDirectory())
   {
-    Serial.println("failed to open file for reading");
+    file.close();
+    File log = fs.open("log.txt", FILE_APPEND);
+    if (!log)
+    {
+      Serial.println("ERR: FAILED TO OPEN log.txt");
+    }
+    else
+    {
+      log.print("ERR: FAILED TO OPEN ");
+      log.println(path);
+      log.close();
+    }
     return ret;
   }
 
@@ -42,6 +53,7 @@ std::vector<std::string> Model::read(fs::FS &fs, std::string filename, std::stri
   {
     ret.push_back(line);
   }
+  file.close();
   return ret;
 }
 
@@ -70,7 +82,17 @@ std::vector<std::string> Model::get_config(fs::FS &fs)
   File file = fs.open("/config.txt");
   if (!file || file.isDirectory())
   {
-    Serial.println("Failed to open config.txt");
+    file.close();
+    File log = fs.open("log.txt", FILE_APPEND);
+    if (!log)
+    {
+      Serial.println("ERR: FAILED TO OPEN log.txt");
+    }
+    else
+    {
+      log.println("ERR: FAILED TO OPEN config.txt");
+      log.close();
+    }
     return ret;
   }
 
@@ -99,7 +121,17 @@ void Model::set_config(fs::FS &fs, std::string txt)
   File file = fs.open("/config.txt", FILE_WRITE);
   if (!file)
   {
-    Serial.println("Failed to open config.txt");
+    file.close();
+    File log = fs.open("log.txt", FILE_APPEND);
+    if (!log)
+    {
+      Serial.println("ERR: FAILED TO OPEN log.txt");
+    }
+    else
+    {
+      log.println("ERR: FAILED TO OPEN config.txt");
+      log.close();
+    }
   }
   else
   {
@@ -107,5 +139,6 @@ void Model::set_config(fs::FS &fs, std::string txt)
     {
       Serial.println("Could not write on config.txt");
     }
+    file.close();
   }
 }
