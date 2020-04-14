@@ -56,3 +56,5 @@ out/
 # End of https://www.gitignore.io/api/code,kicad,platformio
 
 Web/Web_server_KeyBox/src/creditential.h
+
+ESP32/Test Wifi/src/creditential.h
