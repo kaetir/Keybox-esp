@@ -159,7 +159,7 @@ void Controller::load_menu(std::string menu_name)
     std::string arg3;
 
     //SETTING UP THE STRUCTURE FOR EACH MENU LINE
-    for (int i = 0; i < this->menu_lines.size(); i++)
+    for (int i = 0; i < struct_tmp.size(); i++)
     {
         std::istringstream ss(struct_tmp[i]);
         ss >> num >> type;
@@ -246,14 +246,7 @@ void Controller::load_menu(std::string menu_name)
             {
                 std::vector<std::string> account_list = this->model->get_accounts();
 
-                this->menu_lines[num] = account_list[0];
-                this->line_number_of_choices.push_back(num);
-
-                tmp_vect = {"selectAccount", std::string(0)};
-                this->inputs_function.push_back(tmp_vect);
-                this->inputs_link.push_back("Display_account");
-
-                for (int j = 1; j < account_list.size(); j++)
+                for (int j = 0; j < account_list.size(); j++)
                 {
                     this->menu_lines.push_back(account_list[j]);
                     this->line_number_of_choices.push_back(menu_lines.size() - 1);
