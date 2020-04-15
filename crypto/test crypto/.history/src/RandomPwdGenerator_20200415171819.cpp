@@ -14,8 +14,7 @@ char GenRand()
 std::string generate_random_string(int len)
 {
     int n = len, c = 0, s = 0;
-    time_t current_time;
-    srand(time(&current_time));
+    srand(time(0));
     char C;
     std::string D;
     for (int z = 0; z < n; z++) {

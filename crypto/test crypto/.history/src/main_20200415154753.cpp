@@ -6,20 +6,15 @@
 #include <string>
 using namespace std;
 
+int n = 0;
+char key[] = "concombre";
+
 void setup()
 {
     // put your setup code here, to run once:
     Serial.begin(9600);
     Serial.print("Ok");
-    std::string username = "Fire";
-    std::string pwd = "azertymaqsde";
-    Wallet wallet;
-    wallet.createWallet(username, pwd);
-    if ((wallet.checkValid(pwd) == true)) {
-        Serial.print("c'est génial");
-    } else {
-        Serial.print("c'est nul");
-    }
+    bool test = true;
 }
 
 void setup_AES()

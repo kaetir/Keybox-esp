@@ -6,20 +6,15 @@
 #include <string>
 using namespace std;
 
+int n = 0;
+char key[] = "concombre";
+
 void setup()
 {
     // put your setup code here, to run once:
     Serial.begin(9600);
     Serial.print("Ok");
-    std::string username = "Fire";
-    std::string pwd = "azertymaqsde";
-    Wallet wallet;
-    wallet.createWallet(username, pwd);
-    if ((wallet.checkValid(pwd) == true)) {
-        Serial.print("c'est génial");
-    } else {
-        Serial.print("c'est nul");
-    }
+    bool test = true;
 }
 
 void setup_AES()
@@ -72,9 +67,8 @@ void setup_hash()
     }
 }
 
-void loop()
+/*void loop()
 {
-    /*
     // put your main code here, to run repeatedly:
 
     std::string username = "Fire";
@@ -84,5 +78,5 @@ void loop()
     wallet.createWallet(username, pwd);
     Serial1.print(wallet.checkValid(pwd));
     Serial.println(10, HEX);
-    vTaskDelay(500000000);*/
-}
+    vTaskDelay(500000000);
+}*/

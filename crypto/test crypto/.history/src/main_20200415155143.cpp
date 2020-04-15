@@ -15,10 +15,12 @@ void setup()
     std::string pwd = "azertymaqsde";
     Wallet wallet;
     wallet.createWallet(username, pwd);
-    if ((wallet.checkValid(pwd) == true)) {
+    if ((wallet.checkValid(pwd) == true){
         Serial.print("c'est génial");
-    } else {
-        Serial.print("c'est nul");
+    }
+    else
+    {
+        Serial.print("c'est nul")
     }
 }
 

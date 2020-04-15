@@ -1,37 +1,5 @@
 
 #include <iostream>
-#include <cstdlib>
-#include <ctime>
-static const char alphnum[] = "0123456789"
-                              "!@#$%^&*"
-                              "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-                              "abcdefghijklmnopqrstuvwxyz";
-int strLen = sizeof(alphnum) - 1;
-char GenRand()
-{
-    return alphnum[rand() % strLen];
-}
-std::string generate_random_string(int len)
-{
-    int n = len, c = 0, s = 0;
-    time_t current_time;
-    srand(time(&current_time));
-    char C;
-    std::string D;
-    for (int z = 0; z < n; z++) {
-        C = GenRand();
-        D += C;
-        if (isdigit(C)) {
-            c++;
-        }
-        if (C == '!' || C == '@' || C == '$' || C == '%' || C == '^' || C == '&' || C == '*' || C == '#') {
-            s++;
-        }
-    }
-    std::cout << D;
-    return D;
-}
-/*include <iostream>
 #include <vector>
 #include <random>
 #include <functional> //for std::function
@@ -40,7 +8,7 @@ std::string generate_random_string(int len)
 std::vector<char> charset()
 {
     //Change this to suit
-    return std::vector<char>(
+    return char_array(
         { '0', '1', '2', '3', '4',
             '5', '6', '7', '8', '9',
             'A', 'B', 'C', 'D', 'E', 'F',
@@ -64,7 +32,7 @@ std::string random_string(size_t length, std::function<char(void)> rand_char)
     return str;
 }
 
-std::string generate_random_string(int len)
+int generate_random_string(int len)
 {
     //0) create the character set.
     //   yes, you can use an array here,
@@ -72,7 +40,7 @@ std::string generate_random_string(int len)
     const auto ch_set = charset();
 
     //1) create a non-deterministic random number generator
-    std::default_random_engine rng(time();
+    std::default_random_engine rng(std::random_device {}());
 
     //2) create a random number "shaper" that will give
     //   us uniformly distributed indices into the character set
@@ -85,7 +53,6 @@ std::string generate_random_string(int len)
 
     //4) set the length of the string you want and profit!
     auto length = len;
-    std::string test = random_string(length, randchar);
-    std::cout << test << std::endl;
-    return test;
-}*/
+    std::cout << random_string(length, randchar) << std::endl;
+    return 0;
+}

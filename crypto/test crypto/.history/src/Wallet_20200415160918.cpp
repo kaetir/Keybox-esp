@@ -17,28 +17,20 @@ void Wallet::createWallet(std::string masterUser, std::string masterWord)
     unsigned char shaResult[32];
     // creation of the hash
     hash_data(ca, masterWord.size(), shaResult);
-    Serial.println("1");
+    Serial.print("1");
 
     // way to stock the hash in an inderect way
-    Serial.println("2");
-    std::string mainkey_rng;
-    std::string::size_type len = 32;
+    std::string charIndex = "abcdefghijklmnaoqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+    std::string mainkey_rng = random_string(32, charIndex);
 
-    mainkey_rng = generate_random_string(32);
-    mainkey_rng = generate_random_string(32);
-
-    Serial.println("3");
     char* rkey = new char[mainkey_rng.size() + 1];
     std::copy(mainkey_rng.begin(), mainkey_rng.end(), ca);
     rkey[mainkey_rng.size()] = '\0';
-    Serial.println(rkey);
-    /*
     unsigned char main[32];
-
     char* S1 = reinterpret_cast<char*>(shaResult);
 
     pwd_crypt(S1, rkey, main);
-
+    /*
     std::string mainkey(reinterpret_cast<const char*>(main), 32);
     unsigned char check[32];
 

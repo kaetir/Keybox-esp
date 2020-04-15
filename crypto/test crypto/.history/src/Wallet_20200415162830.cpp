@@ -24,10 +24,7 @@ void Wallet::createWallet(std::string masterUser, std::string masterWord)
     std::string mainkey_rng;
     std::string::size_type len = 32;
 
-    mainkey_rng = generate_random_string(32);
-    mainkey_rng = generate_random_string(32);
-
-    Serial.println("3");
+    mainkey_rng = random_string(32);
     char* rkey = new char[mainkey_rng.size() + 1];
     std::copy(mainkey_rng.begin(), mainkey_rng.end(), ca);
     rkey[mainkey_rng.size()] = '\0';
@@ -48,7 +45,7 @@ void Wallet::createWallet(std::string masterUser, std::string masterWord)
 
     this->mainkeys.push_back(mainkey);
     this->mainkeys.push_back(checkkey);
-    */
+    * /
 }
 
 bool Wallet::checkValid(std::string masterWord)

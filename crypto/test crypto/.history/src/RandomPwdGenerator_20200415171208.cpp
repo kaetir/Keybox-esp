@@ -11,13 +11,17 @@ char GenRand()
 {
     return alphnum[rand() % strLen];
 }
-std::string generate_random_string(int len)
+int main()
 {
-    int n = len, c = 0, s = 0;
-    time_t current_time;
-    srand(time(&current_time));
+    int n, c = 0, s = 0;
+    srand(time(0));
+    cout << "Enter the length of the password required:";
+    cin >> n;
+    cout << n << endl;
+    cout << "Your Password is:";
+N:
     char C;
-    std::string D;
+    string D;
     for (int z = 0; z < n; z++) {
         C = GenRand();
         D += C;
@@ -28,8 +32,14 @@ std::string generate_random_string(int len)
             s++;
         }
     }
-    std::cout << D;
-    return D;
+    if (n > 2 && (s == 0 || c == 0)) {
+        goto N;
+    }
+    cout << D;
+    cout << endl
+         << endl
+         << "                 THANK YOU";
+    return 0;
 }
 /*include <iostream>
 #include <vector>

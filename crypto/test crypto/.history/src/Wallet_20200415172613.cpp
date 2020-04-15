@@ -32,7 +32,6 @@ void Wallet::createWallet(std::string masterUser, std::string masterWord)
     std::copy(mainkey_rng.begin(), mainkey_rng.end(), ca);
     rkey[mainkey_rng.size()] = '\0';
     Serial.println(rkey);
-    /*
     unsigned char main[32];
 
     char* S1 = reinterpret_cast<char*>(shaResult);
@@ -48,7 +47,6 @@ void Wallet::createWallet(std::string masterUser, std::string masterWord)
 
     this->mainkeys.push_back(mainkey);
     this->mainkeys.push_back(checkkey);
-    */
 }
 
 bool Wallet::checkValid(std::string masterWord)

@@ -25,14 +25,13 @@ void Wallet::createWallet(std::string masterUser, std::string masterWord)
     std::string::size_type len = 32;
 
     mainkey_rng = generate_random_string(32);
-    mainkey_rng = generate_random_string(32);
-
     Serial.println("3");
+    /*
     char* rkey = new char[mainkey_rng.size() + 1];
     std::copy(mainkey_rng.begin(), mainkey_rng.end(), ca);
     rkey[mainkey_rng.size()] = '\0';
-    Serial.println(rkey);
-    /*
+    
+    
     unsigned char main[32];
 
     char* S1 = reinterpret_cast<char*>(shaResult);
