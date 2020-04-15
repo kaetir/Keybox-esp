@@ -64,7 +64,7 @@ Controller::Controller()
     {
 
         std::vector<std::string> conf = this->model->get_config(this->spf);
-        if (conf.size() == 0)
+        if (conf.size() == 0) //FIRST BOOT DETECTED
         {
             this->first_boot = true;
             this->menu_lines.push_back("LANGUAGE:");
