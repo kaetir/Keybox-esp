@@ -152,4 +152,9 @@ public:
      * @return A boolean indicating if the log out was successful or not
      */
     bool logout();
+
+    /** 
+     * @brief  Send the ids to the computer
+     */
+    void send_ids(int index);
 };

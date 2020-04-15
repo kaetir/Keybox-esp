@@ -212,3 +212,8 @@ bool Model::logout()
   //TODO
   return false;
 }
+
+void Model::send_ids(int index)
+{
+  //TODO
+}

@@ -305,7 +305,7 @@ void Controller::load_menu(std::string menu_name)
                     this->menu_lines.push_back(this->model->getCurrentWifi()[2]);
                     this->menu_lines.push_back("Wifi:");
                     this->menu_lines.push_back(this->model->getCurrentWifi()[0]);
-                    this->menu_lines.push_back("mot de passe:");
+                    this->menu_lines.push_back("pass:");
                     this->menu_lines.push_back(this->model->getCurrentWifi()[1]);
                     this->menu_lines.push_back("OFF");
                     this->line_number_of_choices.push_back(this->menu_lines.size() - 1);
@@ -316,14 +316,14 @@ void Controller::load_menu(std::string menu_name)
                 else
                 {
                     //SEARCH A WIFI ENTRY
-                    this->menu_lines.push_back("Liste des Wifi");
+                    this->menu_lines.push_back("Wifi List");
                     this->line_number_of_choices.push_back(this->menu_lines.size() - 1);
                     tmp_vect = {"None"};
                     this->inputs_function.push_back(tmp_vect);
                     this->inputs_link.push_back("Wifi_list");
 
                     //EMIT WIFI ENTRY
-                    this->menu_lines.push_back("Hotspot Wifi");
+                    this->menu_lines.push_back("Wifi Hotspot");
                     this->line_number_of_choices.push_back(this->menu_lines.size() - 1);
                     tmp_vect = {"hotspot"};
                     this->inputs_function.push_back(tmp_vect);
@@ -586,7 +586,8 @@ void Controller::select_choice()
                 }
                 else if (funct == "sendToComputer") //SEND THE IDS TO THE COMPUTER
                 {
-                    //TODO
+                    this->model->send_ids(this->selected_account);
+                    is_valid = true;
                 }
                 else if (funct == "First_boot") //SET THE LANGUAGE AT THE FIRST BOOT
                 {
