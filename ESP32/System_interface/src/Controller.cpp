@@ -231,11 +231,6 @@ void Controller::load_menu(std::string menu_name)
                 tmp_vect = {funct};
                 this->inputs_function.push_back(tmp_vect);
             }
-            else if (funct == "switch_ServerStatus") //switch_ServerStatus()
-            {
-                tmp_vect = {funct};
-                this->inputs_function.push_back(tmp_vect);
-            }
             else if (funct == "set_Lang")
             {
                 ss >> arg1;
@@ -306,11 +301,33 @@ void Controller::load_menu(std::string menu_name)
             {
                 if (this->model->is_webserver_on())
                 {
-                    this->menu_lines[num] += " ON";
+                    this->menu_lines.push_back("IP");
+                    this->menu_lines.push_back(this->model->getCurrentWifi()[2]);
+                    this->menu_lines.push_back("Wifi:");
+                    this->menu_lines.push_back(this->model->getCurrentWifi()[0]);
+                    this->menu_lines.push_back("mot de passe:");
+                    this->menu_lines.push_back(this->model->getCurrentWifi()[1]);
+                    this->menu_lines.push_back("OFF");
+                    this->line_number_of_choices.push_back(this->menu_lines.size() - 1);
+                    this->inputs_link.push_back("Web_server");
+                    tmp_vect = {"turn_off"};
+                    this->inputs_function.push_back(tmp_vect);
                 }
                 else
                 {
-                    this->menu_lines[num] += " OFF";
+                    //SEARCH A WIFI ENTRY
+                    this->menu_lines.push_back("Liste des Wifi");
+                    this->line_number_of_choices.push_back(this->menu_lines.size() - 1);
+                    tmp_vect = {"None"};
+                    this->inputs_function.push_back(tmp_vect);
+                    this->inputs_link.push_back("Wifi_list");
+
+                    //EMIT WIFI ENTRY
+                    this->menu_lines.push_back("Hotspot Wifi");
+                    this->line_number_of_choices.push_back(this->menu_lines.size() - 1);
+                    tmp_vect = {"hotspot"};
+                    this->inputs_function.push_back(tmp_vect);
+                    this->inputs_link.push_back("Web_server");
                 }
             }
             break;
@@ -502,7 +519,7 @@ void Controller::select_choice()
                 {
                     is_valid = true;
                 }
-                else if (funct == "InputField")
+                else if (funct == "InputField") //INPUT FIELDS
                 {
 #ifdef DEBUG_MODE
                     Serial.print("[INPUT_FIELD]: ");
@@ -511,36 +528,67 @@ void Controller::select_choice()
                     this->input_fields[this->inputs_function[index_of_cursor][1]] = this->write(this->input_fields[this->inputs_function[index_of_cursor][1]]);
                     is_valid = true;
                 }
-                else if (funct == "selectAccount")
+                else if (funct == "selectAccount") //SELECT AN ACCOUNT IN THE ACCOUNT LIST
                 {
                     std::istringstream(this->inputs_function[index_of_cursor][1]) >> this->selected_account;
                     is_valid = true;
                 }
-                else if (funct == "add_account")
+                else if (funct == "add_account") //ADD AN ACCOUNT
                 {
+                    std::string name = this->input_fields[this->inputs_function[index_of_cursor][1]];
+                    std::string username = this->input_fields[this->inputs_function[index_of_cursor][2]];
+                    std::string password = this->input_fields[this->inputs_function[index_of_cursor][3]];
+
+                    if (this->model->add_account(name, username, password))
+                    {
+                        is_valid = true;
+                    }
                 }
-                else if (funct == "deleteAccount")
+                else if (funct == "deleteAccount") //DELETE AN ACCOUNT
                 {
+                    this->model->delete_account(this->selected_account);
+                    is_valid = true;
                 }
-                else if (funct == "login")
+                else if (funct == "login") //TRY TO LOG IN
                 {
+                    std::string user = this->input_fields[this->inputs_function[index_of_cursor][1]];
+                    std::string password = this->input_fields[this->inputs_function[index_of_cursor][2]];
+
+                    if (this->model->login(user, password))
+                    {
+                        is_valid = true;
+                    }
                 }
-                else if (funct == "logoff")
+                else if (funct == "logoff") //TRY TO LOG OUT
                 {
+                    if (this->model->logout())
+                    {
+                        is_valid = true;
+                    }
                 }
-                else if (funct == "setAccountPassword")
+                else if (funct == "setAccountPassword") //SET A NEW PASSWORD
                 {
+                    std::string password = this->input_fields[this->inputs_function[index_of_cursor][1]];
+
+                    if (this->model->modify_account_password(this->selected_account, password))
+                    {
+                        is_valid = true;
+                    }
                 }
-                else if (funct == "setAccountUsername")
+                else if (funct == "setAccountUsername") //SET A NEW USERNAME
                 {
+                    std::string username = this->input_fields[this->inputs_function[index_of_cursor][1]];
+
+                    if (this->model->modify_account_username(this->selected_account, username))
+                    {
+                        is_valid = true;
+                    }
                 }
-                else if (funct == "sendToComputer")
+                else if (funct == "sendToComputer") //SEND THE IDS TO THE COMPUTER
                 {
+                    //TODO
                 }
-                else if (funct == "switch_ServerStatus")
-                {
-                }
-                else if (funct == "First_boot")
+                else if (funct == "First_boot") //SET THE LANGUAGE AT THE FIRST BOOT
                 {
                     this->first_boot = false;
                     this->language = this->inputs_function[index_of_cursor][1];
@@ -548,24 +596,38 @@ void Controller::select_choice()
 
                     is_valid = true;
                 }
-                else if (funct == "set_Lang")
+                else if (funct == "set_Lang") //SET A LANGUAGE
                 {
                     this->language = this->inputs_function[index_of_cursor][1];
                     this->model->set_config(this->spf, this->language);
 
                     is_valid = true;
                 }
-                else if (funct == "connect")
+                else if (funct == "connect") //TRY TO CONNECT TO A WIFI
                 {
                     if (this->model->connect_wifi(this->selected_wifi, this->input_fields[this->inputs_function[index_of_cursor][1]]) == true)
                     {
                         is_valid = true;
                     }
                 }
-                else if (funct == "selectWifi")
+                else if (funct == "selectWifi") //SELECT A WIFI IN THE LIST
                 {
                     std::istringstream(this->inputs_function[index_of_cursor][1]) >> this->selected_wifi;
                     is_valid = true;
+                }
+                else if (funct == "turn_off") //TURN WIFI AND SERVER OFF
+                {
+                    if (this->model->turn_wifi_Off())
+                    {
+                        is_valid = true;
+                    }
+                }
+                else if (funct == "hotspot") //SET AS A WIFI HOTSPOT
+                {
+                    if (this->model->emit_wifi())
+                    {
+                        is_valid = true;
+                    }
                 }
                 if (is_valid == true && this->inputs_link[index_of_cursor] != "None") //LOADING THE NEW MENU
                 {
