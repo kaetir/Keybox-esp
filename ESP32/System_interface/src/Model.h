@@ -14,6 +14,7 @@ private:
     std::vector<std::vector<std::string>> wifi_list; //AVAILABLE WIFI LIST
     std::vector<std::string> current_server;         //CURRENT WIFI SSID, PASSWORD AND SERVER IP
     std::vector<std::vector<std::string>> locker;    //LIST OF ALL ACCOUNTS INFORMATIONS (Name, Username, Password)
+    bool is_hotspot;                                 //IS THE ESP32 EMITING WIFI?
 
 public:
     /** 

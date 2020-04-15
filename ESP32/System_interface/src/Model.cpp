@@ -2,6 +2,7 @@
 
 Model::Model()
 {
+  this->is_hotspot = false;
 }
 
 std::vector<std::string> Model::read(fs::FS &fs, std::string filename, std::string type, std::string lang)
