@@ -30,4 +30,7 @@ public:
     bool login(std::string user, std::string password);
     std::vector<std::string> get_config(fs::FS &fs);
     void set_config(fs::FS &fs, std::string txt);
+    std::string getSSID(int index);
+    std::vector<std::string> getWifis();
+    bool connect_wifi(int index, std::string password);
 };

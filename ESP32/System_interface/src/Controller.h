@@ -28,76 +28,61 @@ private:
     std::vector<std::string> inputs_link;                  //NAME OF THE MENU TO SWITCH TO
     std::map<std::string, std::string> input_fields;       //LIST OF THE INPUT FIELDS IN THE MENU
     std::string language;                                  //LANGUAGE OF THE USER
-    bool first_boot;
+    bool first_boot;                                       //HAS THIS MACHINE EVER BOOTED?
+    int selected_wifi;                                     //INDEX OF THE SELECTED WIFI IN THE WIFI LIST
 
     /** 
-     * @Desc:  Update the display of the menu
-     * @Params:  none
-     * @Returns:  none
+     * @brief  Update the display of the menu
      */
     void update_display();
 
     /** 
-     * @Desc:  Load the menu
-     * @Params:  name of the menu file to load
-     * @Returns:  none
+     * @brief  Load the menu
+     * @param menu_name  name of the menu file to load
      */
     void load_menu(std::string menu_name);
 
     /** 
-     * @Desc:  Initalize the menu buffer and the screen
-     * @Params:  none
-     * @Returns:  none
+     * @brief  Initalize the menu buffer and the screen
      */
     void init_buffer();
 
     /** 
-     * @Desc:  Check and act accordingly to the entry selected by the user
-     * @Params:  none
-     * @Returns:  none
+     * @brief  Check and act accordingly to the entry selected by the user
      */
     void select_choice();
 
     /** 
-     * @Desc:  Go back to the previous menu
-     * @Params:  none
-     * @Returns:  none
+     * @brief  Go back to the previous menu
      */
     void go_back();
 
     /** 
-     * @Desc:  Write in the input field
-     * @Params:  Current content of the input field
-     * @Returns:  New content of the input field
+     * @brief  Write in the input field
+     * @param str  Current content of the input field
+     * @return  New content of the input field
      */
     std::string write(std::string str);
 
     /** 
-     * @Desc:  Update the cursor_position and the menu buffer
-     * @Params:  none
-     * @Returns:  none
+     * @brief  Update the cursor_position and the menu buffer
+     * @param a Must be equal to 1 to scroll up and equal to -1 to scroll down
      */
     void scroll(int a);
 
 public:
     /** 
-     * @Desc:  Constructor
-     * @Params:  none
-     * @Returns:  none
+     * @brief  Constructor
      */
     Controller();
 
     /** 
-     * @Desc:  Destructor
-     * @Params:  none
-     * @Returns:  none
+     * @brief  Destructor
      */
     ~Controller();
 
     /** 
-     * @Desc:  Update the system by taking actions determined by the user input
-     * @Params:  none
-     * @Returns:  none
+     * @brief  Update the system by taking actions determined by the user input
      */
     void update();
 };

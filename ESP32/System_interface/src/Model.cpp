@@ -27,7 +27,9 @@ std::vector<std::string> Model::read(fs::FS &fs, std::string filename, std::stri
   File file = fs.open(path);
   if (!file || file.isDirectory())
   {
-    Serial.println("failed to open file for reading");
+    file.close();
+    Serial.print("ERR: FAILED TO OPEN ");
+    Serial.println(path);
     return ret;
   }
 
@@ -42,6 +44,7 @@ std::vector<std::string> Model::read(fs::FS &fs, std::string filename, std::stri
   {
     ret.push_back(line);
   }
+  file.close();
   return ret;
 }
 
@@ -70,7 +73,8 @@ std::vector<std::string> Model::get_config(fs::FS &fs)
   File file = fs.open("/config.txt");
   if (!file || file.isDirectory())
   {
-    Serial.println("Failed to open config.txt");
+    file.close();
+    Serial.println("ERR: FAILED TO OPEN config.txt");
     return ret;
   }
 
@@ -99,13 +103,32 @@ void Model::set_config(fs::FS &fs, std::string txt)
   File file = fs.open("/config.txt", FILE_WRITE);
   if (!file)
   {
-    Serial.println("Failed to open config.txt");
+    file.close();
+    Serial.println("ERR: FAILED TO OPEN config.txt");
   }
   else
   {
     if (!file.print(str))
     {
-      Serial.println("Could not write on config.txt");
+      Serial.println("ERR: COULD NOT WRITE ON config.txt");
     }
+    file.close();
   }
+}
+
+std::string Model::getSSID(int index)
+{
+  std::string ret;
+  return ret;
+}
+
+std::vector<std::string> Model::getWifis()
+{
+  std::vector<std::string> ret;
+  return ret;
+}
+
+bool Model::connect_wifi(int index, std::string password)
+{
+  return false;
 }
