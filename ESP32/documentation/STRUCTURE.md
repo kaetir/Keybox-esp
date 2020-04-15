@@ -37,7 +37,7 @@ Login.struct:
 - user: Name of the user of the Vault
 - username: Name of the user of the account
 - name: Name/URL of the account
-- password: password of the Vault or password of the account
+- password: password of the Vault/account/Wifi
 
 ## List of funct1 and their arguments:
 - add_account name username password
@@ -47,11 +47,13 @@ Login.struct:
 - setAccountPassword password
 - setAccountUsername username
 - sendToComputer
-- switch_ServerStatus
 - set_Lang language(FR, EN, GE...)
+- connect password
 
 ## List of funct2:
 - getAccountlist
+- get_Wifi_list
+- get_Wifi_SSID
 - getAccountName
 - getAccountUsername
 - getAccountPassword

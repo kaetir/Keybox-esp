@@ -1,4 +1,1 @@
-Serveur Web:
-[STATUS]:
-On/Off
-Menu principal
+Serveur web:
