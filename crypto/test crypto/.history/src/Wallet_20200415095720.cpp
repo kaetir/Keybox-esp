@@ -66,8 +66,7 @@ bool Wallet::checkValid(std::string masterWord)
     pwd_decrypt(rkey, check, key);
     if (keyT == key) {
         std::string sName(reinterpret_cast<char*>(shaResult));
-        this->hashWord = sName;
-        return true;
+        this->hashWord = return true;
     }
 
     return false;
