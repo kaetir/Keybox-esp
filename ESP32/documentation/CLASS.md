@@ -22,9 +22,10 @@
       View : +clear_buffer()
       
       class Model
-      Model : -lang_folder : string
-      Model : -unlocked_locker : vector<string>
-      Model : -user_ids : vector<string>
+      Model : -wifi_list : vector<vector<string>>
+      Model : -current_server : vector<string>
+      Model : -locker : vector<vector<string>>
+      Model : -is_hotspot : bool
       Model : +Model()
       Model : +~Model()
       Model : +read()
@@ -35,10 +36,17 @@
       Model : +modify_account_username()
       Model : +delete_account()
       Model : +is_webserver_on()
-      Model : +switch_server_status()
       Model : +login()
       Model : +get_config()
       Model : +set_config()
+      Model : +getSSID()
+      Model : +getWifis()
+      Model : +connect_wifi()
+      Model : +emit_wifi()
+      Model : +turn_wifi_Off()
+      Model : +getCurrentWifi()
+      Model : +logout()
+      Model : +send_ids()
       
       class Inputs
       Inputs : +Inputs()
@@ -75,6 +83,7 @@
       Controller : -input_fields : map<string, string>
       Controller : -language : string
       Controller : -first_boot : bool
+      Controller : -selected_wifi : int
       Controller : -update_display()
       Controller : -load_menu()
       Controller : -init_buffer()
