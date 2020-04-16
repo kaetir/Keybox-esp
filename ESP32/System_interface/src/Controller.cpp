@@ -118,7 +118,14 @@ void Controller::init_buffer()
     {
         if (i < NUM_LINE)
         {
-            this->view->draw_text(this->menu_lines[i], i, 0);
+            if (i == 0 && this->line_number_of_choices[0] == 0)
+            {
+                this->view->draw_text("->" + this->menu_lines[i], i, 0);
+            }
+            else
+            {
+                this->view->draw_text(this->menu_lines[i], i, 0);
+            }
             this->buffer.push_back(i);
         }
         else
