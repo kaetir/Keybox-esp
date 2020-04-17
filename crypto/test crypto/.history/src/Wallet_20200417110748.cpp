@@ -109,7 +109,8 @@ bool Wallet::addAccount(std::string username, std::string pwd)
         unsigned char cipherTextOutput[32];
         unsigned char decipheredTextOutput[32];
         Serial.println("1");
-        Serial.println(key);
+        Seri
+            Serial.println(key);
         Serial.println("2");
         Serial.println(pwdchar);
         pwd_crypt(pwdchar, key, cipherTextOutput);

@@ -64,8 +64,8 @@ void setup()
     std::string username = "Fire";
     std::string pwd = "azertymaqsdezed";
     Wallet wallet;
-    wallet.createWallet(username, pwd);
-    wallet.checkValid(pwd);
+    wallet.createWallet(username, pwd)
+        wallet.checkWallet(pwd);
     Serial.println("Ok");
     wallet.createWallet(username, pwd);
     Serial.println("Ok");

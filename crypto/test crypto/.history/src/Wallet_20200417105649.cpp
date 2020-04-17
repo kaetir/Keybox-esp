@@ -77,7 +77,7 @@ bool Wallet::checkValid(std::string masterWord)
 
     if (this->mainkeys[0] == checkkey) {
         std::string sName(reinterpret_cast<char*>(shaResult));
-        this->hashWord = masterWord;
+        this->hashWord = sName;
         this->lock = false;
         return true;
     }

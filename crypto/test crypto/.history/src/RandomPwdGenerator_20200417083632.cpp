@@ -1,34 +1,15 @@
 
-#include <iostream>
-#include <cstdlib>
-#include <ctime>
-static const char alphnum[] = "0123456789"
-                              "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-                              "abcdefghijklmnopqrstuvwxyz";
-int strLen = sizeof(alphnum) - 1;
-char GenRand()
+std::string generate_random_alphanumeric_string(std::size_t len)
 {
-    return alphnum[rand() % strLen];
-}
-std::string generate_random_string(int len)
-{
-    int n = len, c = 0, s = 0;
-    time_t current_time;
-    srand(time(&current_time));
-    char C;
-    std::string D;
-    for (int z = 0; z < n; z++) {
-        C = GenRand();
-        D += C;
-        if (isdigit(C)) {
-            c++;
-        }
-        if (C == '!' || C == '@' || C == '$' || C == '%' || C == '^' || C == '&' || C == '*' || C == '#') {
-            s++;
-        }
-    }
-    std::cout << D;
-    return D;
+    static constexpr auto chars = "0123456789"
+                                  "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+                                  "abcdefghijklmnopqrstuvwxyz";
+    thread_local auto rng = random_generator<>();
+
+    auto dist = std::uniform_int_distribution { {}, std::strlen(chars) };
+    auto result = std::string(len, '\0');
+    std::generate_n(begin(result), len, [&]() { return chars[dist(rng)]; });
+    return result;
 }
 /*include <iostream>
 #include <vector>

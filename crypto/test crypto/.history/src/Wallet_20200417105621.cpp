@@ -77,7 +77,7 @@ bool Wallet::checkValid(std::string masterWord)
 
     if (this->mainkeys[0] == checkkey) {
         std::string sName(reinterpret_cast<char*>(shaResult));
-        this->hashWord = masterWord;
+        this->hashWord = sName;
         this->lock = false;
         return true;
     }
@@ -117,19 +117,18 @@ bool Wallet::addAccount(std::string username, std::string pwd)
         pwd_decrypt(cipherTextOutput, key, decipheredTextOutput);
 
         Serial.println("\nCiphered text:");
-        for (int i = 0; i < 32; i++) {
+        for (int i = 0; i < 16; i++) {
 
-            char str[32];
+            char str[16];
 
             sprintf(str, "%02x", (int)cipherTextOutput[i]);
             Serial.print(str);
         }
 
         Serial.println("\n\nDeciphered text:");
-        for (int i = 0; i < 32; i++) {
+        for (int i = 0; i < 16; i++) {
             Serial.print((char)decipheredTextOutput[i]);
         }
-
         acc.initAccount(username, pwd);
         this->strongbox.push_back(acc);
         if (l + 1 == this->strongbox.size()) {

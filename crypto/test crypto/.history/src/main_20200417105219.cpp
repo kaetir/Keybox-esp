@@ -60,17 +60,13 @@ void setup()
 {
     // put your setup code here, to run once:
     Serial.begin(9600);
-    Serial.println("Ok");
+    Serial.print("Ok");
     std::string username = "Fire";
     std::string pwd = "azertymaqsdezed";
     Wallet wallet;
     wallet.createWallet(username, pwd);
-    wallet.checkValid(pwd);
-    Serial.println("Ok");
-    wallet.createWallet(username, pwd);
-    Serial.println("Ok");
-    wallet.addAccount(username, pwd);
-    Serial.println("Ok");
+    setup_AES();
+    //wallet.addAccount(username, pwd);
 }
 
 void loop()

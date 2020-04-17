@@ -1,34 +1,23 @@
+#include <random>
+#include <string>
 
-#include <iostream>
-#include <cstdlib>
-#include <ctime>
-static const char alphnum[] = "0123456789"
-                              "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-                              "abcdefghijklmnopqrstuvwxyz";
-int strLen = sizeof(alphnum) - 1;
-char GenRand()
+std::string generate_random_string(int length)
 {
-    return alphnum[rand() % strLen];
-}
-std::string generate_random_string(int len)
-{
-    int n = len, c = 0, s = 0;
-    time_t current_time;
-    srand(time(&current_time));
-    char C;
-    std::string D;
-    for (int z = 0; z < n; z++) {
-        C = GenRand();
-        D += C;
-        if (isdigit(C)) {
-            c++;
-        }
-        if (C == '!' || C == '@' || C == '$' || C == '%' || C == '^' || C == '&' || C == '*' || C == '#') {
-            s++;
-        }
-    }
-    std::cout << D;
-    return D;
+    static auto& chrs = "0123456789"
+                        "abcdefghijklmnopqrstuvwxyz"
+                        "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+    thread_local static std::mt19937 rg { std::random_device {}() };
+    thread_local static std::uniform_int_distribution<std::string::size_type> pick(0, sizeof(chrs) - 2);
+
+    std::string s;
+
+    s.reserve(length);
+
+    while (length--)
+        s += chrs[pick(rg)];
+
+    return s;
 }
 /*include <iostream>
 #include <vector>

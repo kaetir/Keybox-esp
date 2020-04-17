@@ -3,6 +3,7 @@
 #include <cstdlib>
 #include <ctime>
 static const char alphnum[] = "0123456789"
+                              "!@#$%^&*"
                               "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
                               "abcdefghijklmnopqrstuvwxyz";
 int strLen = sizeof(alphnum) - 1;

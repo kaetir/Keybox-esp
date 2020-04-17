@@ -6,6 +6,24 @@
 #include <string>
 using namespace std;
 
+void setup()
+{
+    // put your setup code here, to run once:
+    Serial.begin(9600);
+    Serial.print("Ok");
+    std::string username = "Fire";
+    std::string pwd = "azertymaqsdezed";
+    Wallet wallet;
+    wallet.createWallet(username, pwd);
+    if ((wallet.checkValid(pwd) == true)) {
+        Serial.print("c'est génial");
+    } else {
+        Serial.print("c'est nul");
+    }
+
+    wallet.addAccount(username, pwd);
+}
+
 void setup_AES()
 {
     // example of how to use AES
@@ -54,23 +72,6 @@ void setup_hash()
         sprintf(str, "%02x", (int)shaResult[i]);
         Serial.print(str);
     }
-}
-
-void setup()
-{
-    // put your setup code here, to run once:
-    Serial.begin(9600);
-    Serial.println("Ok");
-    std::string username = "Fire";
-    std::string pwd = "azertymaqsdezed";
-    Wallet wallet;
-    wallet.createWallet(username, pwd);
-    wallet.checkValid(pwd);
-    Serial.println("Ok");
-    wallet.createWallet(username, pwd);
-    Serial.println("Ok");
-    wallet.addAccount(username, pwd);
-    Serial.println("Ok");
 }
 
 void loop()

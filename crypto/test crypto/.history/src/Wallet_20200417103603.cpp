@@ -77,7 +77,7 @@ bool Wallet::checkValid(std::string masterWord)
 
     if (this->mainkeys[0] == checkkey) {
         std::string sName(reinterpret_cast<char*>(shaResult));
-        this->hashWord = masterWord;
+        this->hashWord = sName;
         this->lock = false;
         return true;
     }
@@ -99,42 +99,31 @@ bool Wallet::addAccount(std::string username, std::string pwd)
 
         Account acc;
         // in order to manipulate string outside wallet we need to transform a string in a char
+        char* key[32];
         int n = this->hashWord.length();
-        char key[n];
-        strncpy(key, this->hashWord.c_str(), n);
+        char key[n + 1];
+        strncpy(key, strin.c_str(), n + 1);
         int n2 = pwd.length();
-        char pwdchar[n2];
-        strncpy(pwdchar, pwd.c_str(), n2);
+        char pwdchar[n2 + 1];
+        strncpy(key, strin.c_str(), n + 1);
 
         unsigned char cipherTextOutput[32];
         unsigned char decipheredTextOutput[32];
-        Serial.println("1");
         Serial.println(key);
-        Serial.println("2");
         Serial.println(pwdchar);
+        /*
         pwd_crypt(pwdchar, key, cipherTextOutput);
-
+        
         pwd_decrypt(cipherTextOutput, key, decipheredTextOutput);
-
-        Serial.println("\nCiphered text:");
-        for (int i = 0; i < 32; i++) {
-
-            char str[32];
-
-            sprintf(str, "%02x", (int)cipherTextOutput[i]);
-            Serial.print(str);
-        }
-
-        Serial.println("\n\nDeciphered text:");
-        for (int i = 0; i < 32; i++) {
-            Serial.print((char)decipheredTextOutput[i]);
-        }
-
+        Serial.println((char*)cipherTextOutput);
+        Serial.println((char*)decipheredTextOutput);
+        
         acc.initAccount(username, pwd);
         this->strongbox.push_back(acc);
         if (l + 1 == this->strongbox.size()) {
             return true;
         }
+        */
         return false;
     }
 

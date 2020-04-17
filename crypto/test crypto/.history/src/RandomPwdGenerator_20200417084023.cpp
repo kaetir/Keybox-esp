@@ -1,8 +1,27 @@
 
 #include <iostream>
+#include <string>
+#include <stdlib.h>
+
+std::string generate_random_string(std::size_t len);
+{
+    std::string str = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+    std::string newstr;
+    time_t current_time;
+    srand(time(&current_time));
+    int pos;
+    while (newstr.size() != len) {
+        pos = ((rand() % (str.size() - 1)));
+        newstr += str.substr(pos, 1);
+    }
+    return newstr;
+}
+
+/*#include <iostream>
 #include <cstdlib>
 #include <ctime>
 static const char alphnum[] = "0123456789"
+                              "!@#$%^&*"
                               "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
                               "abcdefghijklmnopqrstuvwxyz";
 int strLen = sizeof(alphnum) - 1;
@@ -29,7 +48,7 @@ std::string generate_random_string(int len)
     }
     std::cout << D;
     return D;
-}
+}*/
 /*include <iostream>
 #include <vector>
 #include <random>

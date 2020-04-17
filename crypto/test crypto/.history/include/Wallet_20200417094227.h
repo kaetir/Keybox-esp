@@ -10,10 +10,9 @@ public:
     bool checkValid(std::string masterWord);
     std::vector<std::string> getUsers();
     std::vector<std::string> getPwd();
-    char* stringToChar(std::string strin);
+    char* Wallet::stringToChar(std::string strin)
 
-private:
-    std::string masterUser;
+        private : std::string masterUser;
     std::string hashWord;
     std::vector<Account> strongbox;
     std::vector<std::string> mainkeys;
