@@ -3,134 +3,291 @@
 #include "PwdCypher.h"
 #include <Arduino.h>
 
-void Wallet::createWallet(std::string masterUser, std::string masterWord)
+void Wallet::createWallet(std::string masterUser, std::string pwd)
 {
     /* 
         In order to use AES we need char* but for easier manipulation
         we will manipulate string so the manipulation folowing.
     */
 
-    // creation of the pointers necessary
-    char* ca = new char[masterWord.size() + 1];
-    std::copy(masterWord.begin(), masterWord.end(), ca);
-    ca[masterWord.size()] = '\0';
-    unsigned char shaResult[32];
-    // creation of the hash
+    char ca[this->nbit + 1];
+    strncpy(ca, pwd.c_str(), this->nbit);
+    ca[this->nbit] = '\0';
+    unsigned char shaResult[this->nbit];
 
-    hash_data(ca, masterWord.size(), shaResult);
+    hash_data(ca, 32, shaResult);
+    std::string pwd2 = pwd;
+    int c = 0;
+    while (this->nbit > pwd2.length()) {
+        pwd2 += pwd2[c];
+        c++;
+    }
+    // creation of the pointers necessary
+    int n = 16;
+    std::string str1 = pwd2.substr(0, 16);
+    std::string str2 = pwd2.substr(16);
+
+    char ca1[n + 1];
+    strncpy(ca1, str1.c_str(), n);
+    ca1[n] = '\0';
+
+    char ca2[n + 1];
+    strncpy(ca2, str2.c_str(), n);
+    ca2[n] = '\0';
+
+    // creation of the hash
 
     // way to stock the hash in an inderect way
     std::string mainkey_rng;
-    std::string::size_type len = 32;
 
-    mainkey_rng = generate_random_string(32);
-
-    int n = mainkey_rng.length();
+    mainkey_rng = generate_random_string(this->nbit);
 
     // declaring character array
-    char rkey[n + 1];
+    char rkey1[n];
 
     // copying the contents of the
     // string to char array
-    strncpy(rkey, mainkey_rng.c_str(), n + 1);
-    unsigned char main[32];
+    strncpy(rkey1, mainkey_rng.substr(0, 16).c_str(), n);
+    unsigned char S1[this->nbit];
+    char rkey2[n];
 
-    char* S1 = reinterpret_cast<char*>(shaResult);
+    // copying the contents of the
+    // string to char array
+    strncpy(rkey2, mainkey_rng.substr(16).c_str(), n);
+    unsigned char S2[this->nbit];
+    //to implement later a beetter way to store the important data at rest
+    // unsigned char main[this->nbit];
+    //
+    // std::string tpwd(reinterpret_cast<const char*>(shaResult), 32);
+    // char* pk = reinterpret_cast<char*>(shaResult);
+    // strncpy(S1, tpwd.c_str(), this->nbit + 1);
+    // S1[nbit + 1] = '\0';
+    // Serial.println("verif3");
+    // Serial.println(tpwd.c_str());
+    // Serial.println((char*)shaResult);
+    // Serial.println(pk);
+    // Serial.println(S1);
 
-    pwd_crypt(S1, rkey, main);
+    // pwd_crypt(S1, rkey, main);
 
-    std::string mainkey(reinterpret_cast<const char*>(shaResult), 32);
-    unsigned char check[32];
+    // std::string mainkey(reinterpret_cast<const char*>(shaResult), this->nbit);
+    // unsigned char check[this->nbit];
 
-    char* key = (char*)"concombre";
-    pwd_crypt(key, rkey, check);
-    std::string checkkey(reinterpret_cast<const char*>(check), 32);
-    unsigned char S2[32];
-    pwd_decrypt(main, rkey, S2);
-    this->mainkeys.push_back(mainkey);
-    this->mainkeys.push_back(checkkey);
+    // char* key = (char*)"concombre";
+    // pwd_crypt(key, rkey, check);
+
+    // Serial.println("verif1");
+    // Serial.println(S1);
+    // Serial.println(rkey);
+    // Serial.println((char*)main);
+    // this->mainkeys.push_back(main);
+    // this->mainkeys.push_back(check);
+
+    pwd_crypt(rkey1, ca1, S1);
+    pwd_crypt(rkey2, ca2, S2);
+    std::string tpwd1(reinterpret_cast<const char*>(S1), 16);
+    std::string tpwd2(reinterpret_cast<const char*>(S2), 16);
+    std::string hash(reinterpret_cast<const char*>(shaResult), 32);
+
+    this->masterUser = masterUser;
+    this->mainkey.push_back(tpwd1);
+    this->mainkey.push_back(tpwd2);
+    this->hashWord = (hash);
 }
 
-bool Wallet::checkValid(std::string masterWord)
+// std::string Wallet::testHash(std::string hash)
+// {
+//     int n2 = hash.length();
+//     char main[n2];
+//     strncpy(main, hash.c_str(), n2);
+
+//     unsigned char rkey[this->nbit];
+//     if (this->mainkeys[0] == this->test) {
+//         Serial.println("on est bon");
+//     }
+//     Serial.println((char*)this->mainkeys[0]);
+//     Serial.println((char*)this->test);
+//     pwd_decrypt(this->mainkeys[0], main, rkey);
+//     Serial.println("verif2");
+//     std::string mainkey(reinterpret_cast<const char*>(rkey), 32);
+//     Serial.println(hash.c_str());
+//     Serial.println(mainkey.c_str());
+//     Serial.println((char*)this->mainkeys[0]);
+
+//     int n = hash.length();
+//     char check[n];
+//     strncpy(check, mainkey.c_str(), n);
+
+//     unsigned char key[this->nbit];
+
+//     pwd_decrypt(this->mainkeys[1], check, key);
+//     std::string checkkey(reinterpret_cast<const char*>(key));
+
+//     return checkkey;
+// }
+
+// std::string Wallet::getKey(std::string hash)
+// {
+//     char* main = new char[hash.size() + 1];
+//     std::copy(hash.begin(), hash.end(), main);
+//     main[hash.size()] = '\0';
+//     unsigned char rkey[32];
+
+//     pwd_decrypt(this->mainkeys[0], main, rkey);
+//     std::string mainkey(reinterpret_cast<const char*>(rkey), 32);
+// }
+
+bool Wallet::checkValid(std::string username, std::string pwd)
 {
+    if (this->masterUser != username) {
+        return false;
+    }
+    char ca[this->nbit + 1];
+    strncpy(ca, pwd.c_str(), this->nbit);
+    ca[this->nbit] = '\0';
+    unsigned char shaResult[this->nbit];
 
-    char* ca = new char[masterWord.size() + 1];
-    std::copy(masterWord.begin(), masterWord.end(), ca);
-    ca[masterWord.size()] = '\0';
-    unsigned char shaResult[32];
-    // creation of the hash
-    hash_data(ca, masterWord.size(), shaResult);
-    char* main = new char[this->mainkeys[0].size() + 1];
-    std::copy(this->mainkeys[0].begin(), this->mainkeys[0].end(), main);
-    std::string checkkey(reinterpret_cast<const char*>(shaResult), 32);
-    main[this->mainkeys[0].size()] = '\0';
-    unsigned char rkey[32];
-    pwd_decrypt(shaResult, main, rkey);
-    std::string mainkey(reinterpret_cast<const char*>(main), 32);
-    char* check = new char[this->mainkeys[0].size() + 1];
-    std::copy(this->mainkeys[1].begin(), this->mainkeys[1].end(), check);
-    check[this->mainkeys[0].size()] = '\0';
-    unsigned char key[32];
-    char* test = (char*)"concombre";
-    unsigned char* keyT = (unsigned char*)(test);
-    pwd_decrypt(rkey, check, key);
+    hash_data(ca, 32, shaResult);
 
-    if (this->mainkeys[0] == checkkey) {
-        std::string sName(reinterpret_cast<char*>(shaResult));
-        this->hashWord = masterWord;
+    std::string hash(reinterpret_cast<const char*>(shaResult), 32);
+
+    if (hash == this->hashWord) {
+
+        std::string pwd2 = pwd;
+        int c = 0;
+        while (this->nbit > pwd2.length()) {
+            pwd2 += pwd2[c];
+            c++;
+        }
+        // creation of the pointers necessary
+        int n = 16;
+        std::string str1 = pwd2.substr(0, 16);
+        std::string str2 = pwd2.substr(16);
+
+        char ca1[n + 1];
+        strncpy(ca1, pwd.c_str(), n);
+        ca1[n] = '\0';
+
+        char ca2[n + 1];
+        strncpy(ca2, pwd.c_str(), n);
+        ca2[n] = '\0';
+
+        unsigned char ttest[this->nbit / 2 + 1];
+        unsigned char t2test[this->nbit / 2 + 1];
+        for (int i = 0; i <= this->nbit / 2; i++) {
+            ttest[i] = this->mainkey[0].c_str()[i];
+            t2test[i] = this->mainkey[1].c_str()[i];
+            char str[32];
+        }
+        unsigned char truekey1[this->nbit];
+        unsigned char truekey2[this->nbit];
+        // creation of the hash
+        pwd_decrypt(ttest, ca1, truekey1);
+        pwd_decrypt(t2test, ca1, truekey2);
+
+        std::string tpwd1(reinterpret_cast<const char*>(truekey1), 16);
+        std::string tpwd2(reinterpret_cast<const char*>(truekey2), 16);
+
+        this->keys.push_back(tpwd1);
+        this->keys.push_back(tpwd2);
         this->lock = false;
+
         return true;
     }
-
+    Serial.println("oups");
     return false;
 }
 
-bool Wallet::addAccount(std::string username, std::string pwd)
+bool Wallet::addAccount(std::string username, std::string pwd, int len)
 {
     /*
         This method is used to add an account in a wallet class
     */
+    Serial.println("oui");
     if (this->lock == false) {
-        if (username == "" || pwd == "") {
+        std::string str1;
+        std::string str2;
+        if (username == "") {
+
+            Serial.println("non1");
             return false;
         }
 
+        if (pwd == "") {
+            if (len <= 0 || pwd.length() > 32 || len > 32) {
+
+                Serial.println("non2");
+                return false;
+            }
+            pwd = generate_random_string(len);
+        }
+        if (pwd.length() > 16) {
+            std::string pwd2 = pwd;
+            int c = 0;
+            while (this->nbit > pwd2.length()) {
+                pwd2 += pwd2[c];
+                c++;
+            }
+            // creation of the pointers necessary
+            int n = 16;
+            str1 = pwd2.substr(0, 16);
+            str2 = pwd2.substr(16);
+        } else {
+            str1 = pwd;
+        }
         int l = this->strongbox.size();
 
         Account acc;
         // in order to manipulate string outside wallet we need to transform a string in a char
-        int n = this->hashWord.length();
-        char key[n];
-        strncpy(key, this->hashWord.c_str(), n);
-        int n2 = pwd.length();
-        char pwdchar[n2];
-        strncpy(pwdchar, pwd.c_str(), n2);
+        int n = 16;
+        Serial.println(str1.c_str());
+        Serial.println(str2.c_str());
 
-        unsigned char cipherTextOutput[32];
-        unsigned char decipheredTextOutput[32];
-        Serial.println("1");
-        Serial.println(key);
-        Serial.println("2");
-        Serial.println(pwdchar);
-        pwd_crypt(pwdchar, key, cipherTextOutput);
+        char ca1[n + 1];
+        strncpy(ca1, str1.c_str(), n);
+        ca1[n] = '\0';
 
-        pwd_decrypt(cipherTextOutput, key, decipheredTextOutput);
+        char ca2[n + 1];
+        strncpy(ca2, str2.c_str(), n);
+        ca2[n] = '\0';
 
-        Serial.println("\nCiphered text:");
-        for (int i = 0; i < 32; i++) {
+        char key1[n + 1];
+        strncpy(key1, this->keys[0].c_str(), n);
+        key1[n] = '\0';
 
-            char str[32];
+        char key2[n + 1];
+        strncpy(key2, this->keys[1].c_str(), n);
+        key2[n] = '\0';
 
-            sprintf(str, "%02x", (int)cipherTextOutput[i]);
-            Serial.print(str);
+        unsigned char cipherTextOutput1[16];
+        unsigned char cipherTextOutput2[16];
+        unsigned char decipheredTextOutput1[16];
+        unsigned char decipheredTextOutput2[16];
+        unsigned char decipheredTextOutput11[16];
+        unsigned char decipheredTextOutput22[16];
+
+        pwd_crypt(ca1, key1, cipherTextOutput1);
+        pwd_crypt(ca2, key2, cipherTextOutput2);
+
+        unsigned char ttest[17];
+        unsigned char t2test[17];
+        Serial.println("test");
+        for (int j = 0; j < 16; j++) {
+            ttest[j] = cipherTextOutput1[j];
+            t2test[j] = cipherTextOutput2[j];
         }
+        Serial.println("fintest");
+        ttest[16] = '\0';
+        t2test[16] = '\0';
+        pwd_decrypt(ttest, key1, decipheredTextOutput11);
+        pwd_decrypt(cipherTextOutput1, key1, decipheredTextOutput1);
+        pwd_decrypt(t2test, key2, decipheredTextOutput22);
+        pwd_decrypt(cipherTextOutput2, key2, decipheredTextOutput2);
+        Serial.println(strlen((char*)ttest));
 
-        Serial.println("\n\nDeciphered text:");
-        for (int i = 0; i < 32; i++) {
-            Serial.print((char)decipheredTextOutput[i]);
-        }
-
-        acc.initAccount(username, pwd);
+        std::string tpwd(reinterpret_cast<const char*>(cipherTextOutput1), strlen((char*)ttest));
+        std::string tpwd2(reinterpret_cast<const char*>(cipherTextOutput2), strlen((char*)t2test));
+        acc.initAccount(username, tpwd + tpwd2);
         this->strongbox.push_back(acc);
         if (l + 1 == this->strongbox.size()) {
             return true;
@@ -143,7 +300,6 @@ bool Wallet::addAccount(std::string username, std::string pwd)
 
 void Wallet::locked()
 {
-    this->hashWord = "";
     this->lock = true;
 }
 

@@ -62,13 +62,12 @@ void setup()
     Serial.begin(9600);
     Serial.println("Ok");
     std::string username = "Fire";
-    std::string pwd = "azertymaqsdezed";
+    std::string pwd = "onchangepourvoir";
     Wallet wallet;
     wallet.createWallet(username, pwd);
-    wallet.checkValid(pwd);
     Serial.println("Ok");
-    wallet.createWallet(username, pwd);
-    Serial.println("Ok");
+    wallet.checkValid(username, pwd);
+
     wallet.addAccount(username, pwd);
     Serial.println("Ok");
 }
