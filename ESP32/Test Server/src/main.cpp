@@ -21,10 +21,12 @@
 
 // We will use wifi
 #include <WiFi.h>
+https_server_keybox* my_webserver;
 
 void setup() {
   // For logging
   Serial.begin(115200);
+  SPIFFS.begin(false);
 
   // Connect to WiFi
   Serial.println("Setting up WiFi");
@@ -37,8 +39,19 @@ void setup() {
   Serial.println(WiFi.localIP());
 
   // Setup the server as a separate task.
+  my_webserver = new https_server_keybox();
   Serial.println("Creating server task... ");
-  https_server_keybox();
+
+  // We pass:
+  // serverTask - the function that should be run as separate task
+  // "https443" - a name for the task (mainly used for logging)
+  // 4096       - stack size in byte. If you want up to four clients, you should
+  //              not go below 6kB. If your stack is too small, you will
+  //              encounter Panic and stack canary exceptions, usually during
+  //              the call to SSL_accept.
+  // Priority of 2 for faster response time
+  xTaskCreatePinnedToCore(my_webserver->serverTask, "https443", 4096,
+                          my_webserver, 2, NULL, ARDUINO_RUNNING_CORE);
 }
 
 void loop() {}

@@ -1,23 +1,23 @@
 #include "https_server_keybox.h"
 
-https_server_keybox::https_server_keybox(/* args */) {
-  if (start_spiffs()) Serial.println("SPIFFS ERROR");
-}
+// We need to specify some content-type mapping, so the resources get delivered
+// with the right content type and are displayed correctly in the browser
+char contentTypes[][2][32] = {
+    {".htm", "text/html"},         {".html", "text/html"},
+    {".css", "text/css"},          {".js", "application/javascript"},
+    {".json", "application/json"}, {".png", "image/png"},
+    {".jpg", "image/jpg"},         {"", ""}};
+
+// Include certificate data (see note above)
+#include "cert.h"
+#include "private_key.h"
+
+https_server_keybox::https_server_keybox(/* args */)
+    : cert(example_crt_DER, example_crt_DER_len, example_key_DER,
+           example_key_DER_len),
+      secureServer(&cert) {}
 
 https_server_keybox::~https_server_keybox() {}
-
-void https_server_keybox::run() {
-  // We pass:
-  // serverTask - the function that should be run as separate task
-  // "https443" - a name for the task (mainly used for logging)
-  // 4096       - stack size in byte. If you want up to four clients, you should
-  //              not go below 6kB. If your stack is too small, you will
-  //              encounter Panic and stack canary exceptions, usually during
-  //              the call to SSL_accept.
-  // Priority of 2 for faster response time
-  xTaskCreatePinnedToCore(serverTask, "https443", 4096, NULL, 2, NULL,
-                          ARDUINO_RUNNING_CORE);
-}
 
 /** @brief This is a more generic demo for the query parameters. It makes use of
  * the iterator interface to access them, which is useful if you do not know the
@@ -149,21 +149,20 @@ void https_server_keybox::serverTask(void* params) {
   // Add nodes to the server
   // We register the SPIFFS handler as the default node, so every request that
   // does not hit any other node will be redirected to the file system.
-  secureServer.setDefaultNode(spiffsNode);
-  secureServer.registerNode(nodeQueryDemo);
+  ((https_server_keybox*)params)->secureServer.setDefaultNode(spiffsNode);
+  ((https_server_keybox*)params)->secureServer.registerNode(nodeQueryDemo);
 
   Serial.println("Starting server...");
-  secureServer.start();
-  if (secureServer.isRunning()) {
+  ((https_server_keybox*)params)->secureServer.start();
+  if (((https_server_keybox*)params)->secureServer.isRunning()) {
     Serial.println("Server ready.");
 
     // "loop()" function of the separate task
     while (true) {
       // This call will let the server do its work
-      secureServer.loop();
-
+      ((https_server_keybox*)params)->secureServer.loop();
       // Other code would go here...
-      delay(1);
+      delay(10);
     }
   }
 }
