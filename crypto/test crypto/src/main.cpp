@@ -66,10 +66,14 @@ void setup()
     Wallet wallet;
     wallet.createWallet(username, pwd);
     Serial.println("Ok");
-    wallet.checkValid(username, pwd);
+    wallet.unlock(username, pwd);
 
     wallet.addAccount(username, pwd);
     Serial.println("Ok");
+    std::vector<std::string> test = wallet.getPwd();
+    for (auto& acc : test) {
+        Serial.println(acc.c_str());
+    }
 }
 
 void loop()
