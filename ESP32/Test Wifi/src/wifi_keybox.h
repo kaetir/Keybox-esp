@@ -57,17 +57,19 @@ public:
    * @param password
    */
   void connect_wifi(String ssid, String password);
+
   /**
    * @brief disconnect esp32 from wifi network
    * 
    */
   void diconnect_wifi();
+
   /**
-   * @brief Get the ip object
+   * @brief Get the ip of esp32 
    * 
    * @return String 
    */
-  String get_ip();
+  IPAddress get_ip();
 
   /**
    * @brief enables esp32 as acces point and return the serialized ssid and password and ip adress
@@ -81,6 +83,13 @@ public:
    * 
    */
   void disable_AP();
+
+  /**
+   * @brief list all the wifi networks available
+   * 
+   * @return std::vector<String> 
+   */
+  std::vector<String> list_wifi();
 };
 
 #endif
