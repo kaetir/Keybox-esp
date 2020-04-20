@@ -27,6 +27,7 @@ Main_menu --> Web_server
 Main_menu --> Accounts_menu
 Main_menu --> Language
 Accounts_menu --> Add_account
+Add_account --> Accounts_menu
 Accounts_menu --> Account_selection
 Account_selection --> Display_account
 Display_account --> Delete_account
