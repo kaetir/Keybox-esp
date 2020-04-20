@@ -197,12 +197,11 @@ bool Wallet::unlock(std::string username, std::string pwd)
     return false;
 }
 
-bool Wallet::addAccount(std::string username, std::string pwd, int len)
+bool Wallet::addAccount(std::string nameAccount, std::string username, std::string pwd, int l = -1);
 {
     /*
         This method is used to add an account in a wallet class
     */
-    Serial.println("oui");
     if (this->lock == false) {
         std::string str1;
         std::string str2;
@@ -234,7 +233,7 @@ bool Wallet::addAccount(std::string username, std::string pwd, int len)
         }
         int l = this->strongbox.size();
 
-        Account acc;
+        std::vector<std::string> acc;
         // in order to manipulate string outside wallet we need to transform a string in a char
         int n = 16;
 
@@ -273,10 +272,12 @@ bool Wallet::addAccount(std::string username, std::string pwd, int len)
 
         std::string tpwd1(reinterpret_cast<const char*>(ttest), strlen((char*)ttest));
         std::string tpwd2(reinterpret_cast<const char*>(t2test), strlen((char*)t2test));
-
-        acc.initAccount(username, tpwd1 + tpwd2);
+        acc.push_back(nameAccount);
+        acc.push_back(username);
+        acc.push_back(username, tpwd1 + tpwd2);
 
         this->strongbox.push_back(acc);
+
         if (l + 1 == this->strongbox.size()) {
             return true;
         }
@@ -302,9 +303,12 @@ std::vector<std::string> Wallet::getUsers()
     return users;
 }
 
-std::vector<std::string> Wallet::getPwd()
+std::vector<std::vector<std::string>> Wallet::getAccounts()
 {
     if (this->lock == false) {
+
+        std::vector<std::vector<std::string>> accounts;
+
         std::vector<std::string> pwds;
         int n = 16;
         char key1[n + 1];
@@ -316,8 +320,9 @@ std::vector<std::string> Wallet::getPwd()
         key2[n] = '\0';
 
         for (auto& acc : this->strongbox) {
-            std::string str1 = acc.getPwd().substr(0, 16);
-            std::string str2 = acc.getPwd().substr(16);
+            std::vector<std::string> account;
+            std::string str1 = acc[2].substr(0, 16);
+            std::string str2 = acc[2].substr(16);
 
             Serial.println(str1.c_str());
             Serial.println(str2.c_str());
@@ -348,8 +353,10 @@ std::vector<std::string> Wallet::getPwd()
             while (pwd[c] != ' ') {
                 c++;
             }
-
-            pwds.push_back(pwd.substr(0, c));
+            account.push_back(acc[0]);
+            account.push_back(acc[1]);
+            account.push_back(pwd.substr(0, c));
+            accounts.push_back(account);
         }
         return pwds;
     }
@@ -363,114 +370,104 @@ bool Wallet::changeMasterUsername(std::string Username)
     }
     return false;
 }
-bool Wallet::changeUsername(std::string Username, std::string pwd, std::string newUsername)
+
+bool Wallet::changeUsername(int accountIndex, std::string newUsername)
 {
     if (this->lock == false) {
-        std::vector<std::string> pwds = this->getPwd();
-        std::vector<int> posible;
-        for (int i = 0; i < pwds.size(); i++) {
-            if (pwds[i] == pwd) {
-                posible.push_back(i);
-            }
+        if (0 <= AccountId < this->strongbox.size()) {
+            return false;
         }
-        std::vector<int> posible2;
-        for (auto& pos : posible) {
-            if (this->strongbox[pos].getUsername() == Username) {
-                posible2.push_back(pos);
-            }
-        }
-        if (posible2.size() == 1) {
-            this->strongbox[posible2[0]].changeUsername(newUsername);
-            return true;
-        }
-        return false;
+        this->strongbox[AccountId][1] = newUsername;
+        return true
     }
     return false;
 }
 
-bool Wallet::changePwd(std::string Username, std::string pwd, std::string newpwd, int len)
+bool Wallet::changePwd(int accountIndex, std::string newpwd)
 {
     if (this->lock == false) {
-        std::vector<std::string> pwds = this->getPwd();
-        std::vector<int> posible;
-        for (int i = 0; i < pwds.size(); i++) {
-            if (pwds[i] == pwd) {
-                posible.push_back(i);
-            }
-        }
-        std::vector<int> posible2;
-        for (auto& pos : posible) {
-            if (this->strongbox[pos].getUsername() == Username) {
-                posible2.push_back(pos);
-            }
-        }
-        if (posible2.size() == 1) {
-            std::string str1;
-            std::string str2;
+        if (0 <= accountIndex < this->strongbox.size()) {
+            std::vector<std::string> pwds = this->getPwd();
+            if (0 <= accountIndex < this->strongbox.size()) {
+                std::string str1;
+                std::string str2;
 
-            if (pwd == "") {
-                if (len <= 0 || newpwd.length() > 32 || len > 32) {
-                    return false;
+                if (pwd == "") {
+                    if (len <= 0 || newpwd.length() > 32 || len > 32) {
+                        return false;
+                    }
+                    pwd = generate_random_string(len);
                 }
-                pwd = generate_random_string(len);
-            }
-            if (newpwd.length() > 16) {
-                std::string pwd2 = pwd;
-                // creation of the pointers necessary
-                str1 = pwd2.substr(0, 16);
-                str2 = pwd2.substr(16, 16);
-                if (pwd.length() != 32) {
-                    str2[pwd.length() - 1] = ' ';
+                if (newpwd.length() > 16) {
+                    std::string pwd2 = pwd;
+                    // creation of the pointers necessary
+                    str1 = pwd2.substr(0, 16);
+                    str2 = pwd2.substr(16, 16);
+                    if (pwd.length() != 32) {
+                        str2[pwd.length() - 1] = ' ';
+                    }
+                } else {
+                    str1 = pwd;
+                    str2 = " ";
                 }
-            } else {
-                str1 = pwd;
-                str2 = " ";
+                int l = this->strongbox.size();
+
+                Account acc;
+                // in order to manipulate string outside wallet we need to transform a string in a char
+                int n = 16;
+
+                char ca1[n + 1];
+                strncpy(ca1, str1.c_str(), n);
+                ca1[n] = '\0';
+
+                char ca2[n + 1];
+                strncpy(ca2, str2.c_str(), n);
+                ca2[n] = '\0';
+
+                char key1[n + 1];
+                strncpy(key1, this->keys[0].c_str(), n);
+                key1[n] = '\0';
+
+                char key2[n + 1];
+                strncpy(key2, this->keys[1].c_str(), n);
+                key2[n] = '\0';
+
+                unsigned char cipherTextOutput1[16];
+                unsigned char cipherTextOutput2[16];
+
+                pwd_crypt(ca1, key1, cipherTextOutput1);
+                pwd_crypt(ca2, key2, cipherTextOutput2);
+                Serial.println(1);
+                Serial.println(ca1);
+                Serial.println(ca2);
+                unsigned char ttest[17];
+                unsigned char t2test[17];
+                for (int j = 0; j < 16; j++) {
+                    ttest[j] = cipherTextOutput1[j];
+                    t2test[j] = cipherTextOutput2[j];
+                }
+                ttest[16] = '\0';
+                t2test[16] = '\0';
+
+                std::string tpwd1(reinterpret_cast<const char*>(ttest), strlen((char*)ttest));
+                std::string tpwd2(reinterpret_cast<const char*>(t2test), strlen((char*)t2test));
+
+                this->strongbox[accountIndex][2] = tpwd1 + tpwd2;
+
+                return true;
             }
-            int l = this->strongbox.size();
-
-            Account acc;
-            // in order to manipulate string outside wallet we need to transform a string in a char
-            int n = 16;
-
-            char ca1[n + 1];
-            strncpy(ca1, str1.c_str(), n);
-            ca1[n] = '\0';
-
-            char ca2[n + 1];
-            strncpy(ca2, str2.c_str(), n);
-            ca2[n] = '\0';
-
-            char key1[n + 1];
-            strncpy(key1, this->keys[0].c_str(), n);
-            key1[n] = '\0';
-
-            char key2[n + 1];
-            strncpy(key2, this->keys[1].c_str(), n);
-            key2[n] = '\0';
-
-            unsigned char cipherTextOutput1[16];
-            unsigned char cipherTextOutput2[16];
-
-            pwd_crypt(ca1, key1, cipherTextOutput1);
-            pwd_crypt(ca2, key2, cipherTextOutput2);
-            Serial.println(1);
-            Serial.println(ca1);
-            Serial.println(ca2);
-            unsigned char ttest[17];
-            unsigned char t2test[17];
-            for (int j = 0; j < 16; j++) {
-                ttest[j] = cipherTextOutput1[j];
-                t2test[j] = cipherTextOutput2[j];
-            }
-            ttest[16] = '\0';
-            t2test[16] = '\0';
-
-            std::string tpwd1(reinterpret_cast<const char*>(ttest), strlen((char*)ttest));
-            std::string tpwd2(reinterpret_cast<const char*>(t2test), strlen((char*)t2test));
-            this->strongbox[posible2[0]].changePwd(tpwd1 + tpwd2);
-            return true;
         }
-        return false;
     }
     return false;
+}
+
+bool Wallet::delAccount(int accountIndex)
+{
+    if (this->lock == false) {
+        if (0 <= accountIndex < this->strongbox.size()) {
+            this->strongbox.erase(this->strongbox.begin() + accountIndex);
+            return true;
+        }
+    }
+    return false
 }
