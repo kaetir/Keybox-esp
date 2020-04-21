@@ -1,9 +1,21 @@
-#include <Arduino.h>
+#include "Controller.h"
+
+Controller *controller;
+bool has_started = false;
 
 void setup() {
-  // put your setup code here, to run once:
+  Serial.begin(115200);
+  if (!SPIFFS.begin(true)) {
+    Serial.println("SPIFFS Mount Failed");
+  } else {
+    controller = new Controller();
+    has_started = true;
+  }
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
+  if (has_started == true) {
+    controller->update();
+    delay(50);
+  }
 }

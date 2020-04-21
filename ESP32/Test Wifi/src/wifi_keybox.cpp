@@ -35,6 +35,8 @@ String wifi_keybox::enable_AP(String s_ssid, String s_passwd) {
   return s_ssid + " " + s_passwd + " " + WiFi.softAPIP().toString();
 }
 
+void wifi_keybox::disable_AP() { WiFi.softAPdisconnect(true); }
+
 std::vector<String> wifi_keybox::list_wifi() {
   std::vector<String> liste;
   WiFi.mode(WIFI_STA);
