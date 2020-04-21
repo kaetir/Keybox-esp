@@ -1,0 +1,12 @@
+{
+    "Master": "abcdef",
+    "Hash": "0123456789",
+    "Accounts": [
+        {
+            "Name": "google",
+            "Username": "antonin",
+            "Password": "pwd"
+        }
+    ],
+    "Size": 1
+}

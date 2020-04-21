@@ -4,6 +4,8 @@
 #include "PwdCypher.h"
 #include <iostream>
 #include <string>
+#include "FS.h"
+#include "SPIFFS.h"
 using namespace std;
 
 void setup_AES()
@@ -58,21 +60,26 @@ void setup_hash()
 
 void setup()
 {
-    // put your setup code here, to run once:
+    // Initialize serial port
     Serial.begin(9600);
-    Serial.println("Ok");
-    std::string username = "Fire";
-    std::string pwd = "onchangepourvoir";
-    Wallet wallet;
-    wallet.createWallet(username, pwd);
-    Serial.println("Ok");
-    wallet.unlock(username, pwd);
+    Serial.println("OUI");
+    std::string username = "FireWolf";
+    std::string pwd = "jenesaisplusquo";
+    std::string count = "laposte";
+    std::string account = "loupio";
+    std::string pwdacc = "jenesaisplusquo";
+    if (!SPIFFS.begin(true)) {
+        Serial.println("SPIFFS Mount Failed");
+    } else {
+        Wallet wallet;
+        Wallet temp;
 
-    wallet.addAccount(username, pwd);
-    Serial.println("Ok");
-    std::vector<std::string> test = wallet.getPwd();
-    for (auto& acc : test) {
-        Serial.println(acc.c_str());
+        temp.createWallet(username, pwd);
+        temp.unlock(username, pwd);
+        temp.addAccount(count, account, pwdacc);
+        temp.saveWallet();
+        wallet.initWalletJson();
+        wallet.unlock(username, pwd);
     }
 }
 

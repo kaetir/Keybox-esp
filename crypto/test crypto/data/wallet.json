@@ -1,0 +1,14 @@
+{
+    "master": "FireWolf",
+    "hash": "",
+    "key" : "",
+
+    "accounts": [
+        {
+            "name": "google",
+            "username": "antonin",
+            "password": "pwd"
+        }
+    ],
+    "size": 1
+}
