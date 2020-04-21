@@ -270,6 +270,11 @@ void Controller::load_menu(std::string menu_name)
         tmp_vect = {funct, arg1};
         this->inputs_function.push_back(tmp_vect);
       }
+      else if (funct == "hotspot")
+      {
+        tmp_vect = {funct};
+        this->inputs_function.push_back(tmp_vect);
+      }
       break;
 
     case 'g': // GET FUNCTIONS
@@ -357,19 +362,7 @@ void Controller::load_menu(std::string menu_name)
         }
         else //LOAD WIFI ENTRIES (HOTSPOT AND WIFI LIST)
         {
-          //SEARCH A WIFI ENTRY
-          this->menu_lines[num] = "Wifi List";
-          this->line_number_of_choices.push_back(this->menu_lines.size() - 1);
-          tmp_vect = {"None"};
-          this->inputs_function.push_back(tmp_vect);
-          this->inputs_link.push_back("Wifi_list");
-
-          //EMIT WIFI ENTRY
-          this->menu_lines.push_back("Wifi Hotspot");
-          this->line_number_of_choices.push_back(this->menu_lines.size() - 1);
-          tmp_vect = {"hotspot"};
-          this->inputs_function.push_back(tmp_vect);
-          this->inputs_link.push_back("Web_server");
+          this->load_menu("Wifi_emit_connect");
         }
       }
       break;
