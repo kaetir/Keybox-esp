@@ -1,0 +1,6 @@
+0 t
+1 g getServerIP
+2 t
+3 g getWifiName 
+4 t
+5 g getWifiPassword
