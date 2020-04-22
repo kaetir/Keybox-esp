@@ -1,6 +1,5 @@
 #include "Wallet.h"
 #include "ArduinoJson.h"
-#include "ascicodes.h"
 #include <bits/stdc++.h>
 
 Wallet::Wallet()
