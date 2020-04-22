@@ -1,0 +1,9 @@
+0 t
+1 g getAccountName
+2 t
+3 g getAccountUsername
+4 t
+5 g getAccountPassword
+6 > Send_to_computer
+7 > Modify_account
+8 > Delete_account
