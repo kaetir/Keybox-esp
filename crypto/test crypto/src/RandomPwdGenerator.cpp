@@ -7,7 +7,7 @@ static const char alphnum[] = "0123456789"
 int strLen = sizeof(alphnum) - 1;
 char GenRand()
 {
-    return alphnum[rand() % strLen];
+    return alphnum[esp_random() % strLen];
 }
 std::string generate_random_string(int len)
 {

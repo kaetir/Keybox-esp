@@ -1,7 +1,5 @@
 #include <Arduino.h>
-#include "RandomPwdGenerator.h"
 #include "Wallet.h"
-#include "PwdCypher.h"
 #include <iostream>
 #include <string>
 #include "FS.h"
@@ -62,7 +60,6 @@ void setup()
 {
     // Initialize serial port
     Serial.begin(9600);
-    Serial.println("OUI");
     std::string username = "FireWolf";
     std::string pwd = "jenesaisplusquo";
     std::string count = "laposte";
@@ -73,13 +70,34 @@ void setup()
     } else {
         Wallet wallet;
         Wallet temp;
+        unsigned char output[32];
+        hash_data((char*)"coucou", 6, output);
+        for (int i = 0; i < 32; i++) {
+            char str[4];
 
+            sprintf(str, "%02x", (int)output[i]);
+            Serial.print(str);
+        }
         temp.createWallet(username, pwd);
-        temp.unlock(username, pwd);
+        temp.unlock(pwd);
         temp.addAccount(count, account, pwdacc);
+        std::vector<std::vector<std::string>> strongbox2 = temp.getAccounts();
+        Serial.println("Account 1");
+        for (auto& acc : strongbox2) {
+            Serial.println(acc[0].c_str());
+            Serial.println(acc[1].c_str());
+            Serial.println(acc[2].c_str());
+        }
         temp.saveWallet();
         wallet.initWalletJson();
-        wallet.unlock(username, pwd);
+        wallet.unlock(pwd);
+        std::vector<std::vector<std::string>> strongbox = wallet.getAccounts();
+        Serial.println("Account 2");
+        for (auto& acc : strongbox) {
+            Serial.println(acc[0].c_str());
+            Serial.println(acc[1].c_str());
+            Serial.println(acc[2].c_str());
+        }
     }
 }
 

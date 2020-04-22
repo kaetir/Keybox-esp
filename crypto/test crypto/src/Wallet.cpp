@@ -1,14 +1,16 @@
 #include "Wallet.h"
 #include "ArduinoJson.h"
+#include "ascicodes.h"
 #include <bits/stdc++.h>
 
-Wallet ::Wallet()
+Wallet::Wallet()
 {
+
     this->lock = true;
-    this->nbit = 32;
+    this->nbytes = 32;
 }
 
-std::string getWalletJson(fs::FS& fs)
+std::string Wallet::getWalletJson(fs::FS& fs)
 {
     std::string file_str;
     //OPEN THE FILE
@@ -26,7 +28,7 @@ std::string getWalletJson(fs::FS& fs)
     return file_str;
 }
 
-void setWalletJson(fs::FS& fs, std::string txt)
+void Wallet::setWalletJson(fs::FS& fs, std::string txt)
 {
     //CONVERT THE STRING TO A CONST CHAR*
     char tmp[txt.size() + 1];
@@ -69,11 +71,10 @@ bool Wallet::isWalletcreated()
 
 void Wallet::initWalletJson()
 {
-    //OPEN THE FILE
+    //Create the array to manage a json
     DynamicJsonDocument doc(20000);
 
     std::string str = getWalletJson(SPIFFS);
-    Serial.println(str.c_str());
 
     char json[str.size() + 1];
     std::copy(str.begin(), str.end(), json);
@@ -88,17 +89,13 @@ void Wallet::initWalletJson()
         Serial.println(error.c_str());
         return;
     }
-
+    //  Recover the values
     const char* master = doc["master"];
     const char* hash = doc["hash"];
     const char* k = doc["key"];
     int size = doc["size"];
 
     std::string key = k;
-
-    // Print values.
-    Serial.println(master);
-    Serial.println(size);
 
     std::vector<std::vector<std::string>> stgbox;
 
@@ -115,28 +112,19 @@ void Wallet::initWalletJson()
         stgbox.push_back(tmp);
     }
 
-    for (int i = 0; i < stgbox.size(); i++) {
-        Serial.println(stgbox[i][0].c_str());
-        Serial.println(stgbox[i][1].c_str());
-        Serial.println(stgbox[i][2].c_str());
-    }
+    //Initialize the wallet with the values recovered
     this->masterUser = master;
     this->hashWord = hash;
     this->strongbox = stgbox;
-    Serial.println(this->masterUser.c_str());
-    Serial.println(this->hashWord.c_str());
-    for (auto& acc : this->strongbox) {
-        Serial.println(acc[0].c_str());
-        Serial.println(acc[1].c_str());
-        Serial.println(acc[2].c_str());
-    }
     this->mainkey.push_back(key.substr(0, 16));
-    this->mainkey.push_back(key.substr(16, 16));
+    this->mainkey.push_back(key.substr(16));
 }
 
 void Wallet::saveWallet()
 {
+    //Creation of the json array
     DynamicJsonDocument doc(20000);
+    //Add all key/parameters to the json array
     std::string key = this->mainkey[0] + this->mainkey[1];
     doc["master"] = this->masterUser.c_str();
     doc["hash"] = this->hashWord.c_str();
@@ -149,7 +137,9 @@ void Wallet::saveWallet()
     }
     doc["size"] = size;
     std::string output;
+    //Cretation of the json string
     serializeJson(doc, output);
+    //Save the data
     setWalletJson(SPIFFS, output);
 }
 
@@ -159,19 +149,21 @@ void Wallet::createWallet(std::string masterUser, std::string pwd)
         In order to use AES we need char* but for easier manipulation
         we will manipulate string so the manipulation folowing.
     */
+    char ca[this->nbytes + 1];
+    strncpy(ca, pwd.c_str(), this->nbytes);
+    ca[this->nbytes] = '\0';
+    unsigned char shaResult[this->nbytes];
 
-    char ca[this->nbit + 1];
-    strncpy(ca, pwd.c_str(), this->nbit);
-    ca[this->nbit] = '\0';
-    unsigned char shaResult[this->nbit];
-
+    // creation of the hash
     hash_data(ca, 32, shaResult);
     std::string pwd2 = pwd;
     int c = 0;
-    while (this->nbit > pwd2.length()) {
+
+    while (this->nbytes > pwd2.length()) {
         pwd2 += pwd2[c];
         c++;
     }
+
     // creation of the pointers necessary
     int n = 16;
     std::string str1 = pwd2.substr(0, 16);
@@ -185,12 +177,9 @@ void Wallet::createWallet(std::string masterUser, std::string pwd)
     strncpy(ca2, str2.c_str(), n);
     ca2[n] = '\0';
 
-    // creation of the hash
-
-    // way to stock the hash in an inderect way
     std::string mainkey_rng;
 
-    mainkey_rng = generate_random_string(this->nbit);
+    mainkey_rng = generate_random_string(this->nbytes);
 
     // declaring character array
     char rkey1[n];
@@ -198,42 +187,49 @@ void Wallet::createWallet(std::string masterUser, std::string pwd)
     // copying the contents of the
     // string to char array
     strncpy(rkey1, mainkey_rng.substr(0, 16).c_str(), n);
-    unsigned char S1[this->nbit];
+    unsigned char S1[16];
     char rkey2[n];
 
     // copying the contents of the
     // string to char array
     strncpy(rkey2, mainkey_rng.substr(16).c_str(), n);
-    unsigned char S2[this->nbit];
+    unsigned char S2[16];
 
+    // encryption of the key
     pwd_crypt(rkey1, ca1, S1);
     pwd_crypt(rkey2, ca2, S2);
     std::string tpwd1(reinterpret_cast<const char*>(S1), 16);
     std::string tpwd2(reinterpret_cast<const char*>(S2), 16);
     std::string hash(reinterpret_cast<const char*>(shaResult), 32);
     std::string test = tpwd1 + tpwd2;
+    unsigned char output1[16];
+    unsigned char output2[16];
+    pwd_decrypt(S1, ca1, output1);
+    pwd_decrypt(S2, ca2, output2);
+    std::string tpwd11(reinterpret_cast<const char*>(output1), 16);
+    std::string tpwd22(reinterpret_cast<const char*>(output2), 16);
+    std::string test2 = tpwd11 + tpwd22;
 
     std::stringstream ss;
     for (int i = 0; i < 32; ++i)
         ss << HEX << (int)shaResult[i];
     std::string mystr = ss.str();
 
-    this->masterUser = masterUser;
+    // init the wallet with the desired values
 
+    this->masterUser = masterUser;
     this->mainkey.push_back(tpwd1);
     this->mainkey.push_back(tpwd2);
     this->hashWord = hash;
 }
 
-bool Wallet::unlock(std::string username, std::string pwd)
+bool Wallet::unlock(std::string pwd)
 {
-    if (this->masterUser != username) {
-        return false;
-    }
-    char ca[this->nbit + 1];
-    strncpy(ca, pwd.c_str(), this->nbit);
-    ca[this->nbit] = '\0';
-    unsigned char shaResult[this->nbit];
+    // ca -> pwd in char* form
+    char ca[this->nbytes + 1];
+    strncpy(ca, pwd.c_str(), this->nbytes);
+    ca[this->nbytes] = '\0';
+    unsigned char shaResult[this->nbytes];
 
     hash_data(ca, 32, shaResult);
 
@@ -241,30 +237,38 @@ bool Wallet::unlock(std::string username, std::string pwd)
 
     if (hash == this->hashWord) {
         std::string pwd2 = pwd;
+        int c = 0;
+
+        while (this->nbytes > pwd2.length()) {
+            pwd2 += pwd2[c];
+            c++;
+        }
+
         // creation of the pointers necessary
         int n = 16;
         std::string str1 = pwd2.substr(0, 16);
-        std::string str2 = pwd2.substr(16, 16);
+        std::string str2 = pwd2.substr(16);
 
         char ca1[n + 1];
-        strncpy(ca1, pwd.c_str(), n);
+        strncpy(ca1, str1.c_str(), n);
         ca1[n] = '\0';
 
         char ca2[n + 1];
-        strncpy(ca2, pwd.c_str(), n);
+        strncpy(ca2, str2.c_str(), n);
         ca2[n] = '\0';
 
-        unsigned char ttest[this->nbit / 2 + 1];
-        unsigned char t2test[this->nbit / 2 + 1];
-        for (int i = 0; i <= this->nbit / 2; i++) {
+        unsigned char ttest[this->nbytes / 2 + 1];
+        unsigned char t2test[this->nbytes / 2 + 1];
+        for (int i = 0; i <= this->nbytes / 2; i++) {
             ttest[i] = this->mainkey[0].c_str()[i];
             t2test[i] = this->mainkey[1].c_str()[i];
         }
-        unsigned char truekey1[this->nbit];
-        unsigned char truekey2[this->nbit];
+
+        unsigned char truekey1[this->nbytes];
+        unsigned char truekey2[this->nbytes];
         // creation of the hash
         pwd_decrypt(ttest, ca1, truekey1);
-        pwd_decrypt(t2test, ca1, truekey2);
+        pwd_decrypt(t2test, ca2, truekey2);
 
         std::string tpwd1(reinterpret_cast<const char*>(truekey1), 16);
         std::string tpwd2(reinterpret_cast<const char*>(truekey2), 16);
@@ -385,7 +389,7 @@ std::vector<std::vector<std::string>> Wallet::getAccounts()
         strncpy(key2, this->keys[1].c_str(), n);
         key2[n] = '\0';
 
-        for (auto& acc : this->strongbox) {
+        for (auto acc : this->strongbox) {
             std::vector<std::string> account;
             std::string str1 = acc[2].substr(0, 16);
             std::string str2 = acc[2].substr(16);
@@ -405,12 +409,11 @@ std::vector<std::vector<std::string>> Wallet::getAccounts()
             pwd_decrypt(ttest, key1, decipheredTextOutput1);
             pwd_decrypt(t2test, key2, decipheredTextOutput2);
 
-            std::string tpwd1(reinterpret_cast<const char*>(decipheredTextOutput1), strlen((char*)ttest));
-            std::string tpwd2(reinterpret_cast<const char*>(decipheredTextOutput2), strlen((char*)t2test));
+            std::string tpwd1(reinterpret_cast<const char*>(decipheredTextOutput1));
+            std::string tpwd2(reinterpret_cast<const char*>(decipheredTextOutput2));
 
             std::string pwd = tpwd1 + tpwd2;
             int c = 0;
-
             while (pwd[c] != ' ') {
                 c++;
             }

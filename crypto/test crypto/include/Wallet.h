@@ -41,7 +41,7 @@ public:
      * @param pwd  pwd of the account
      * @return  Success
      */
-    bool unlock(std::string username, std::string pwd);
+    bool unlock(std::string pwd);
     /** 
      * @brief  Give all the account in the wallet if open
      * @return  All the account
@@ -68,8 +68,30 @@ public:
      * @return  Success
      */
     bool delAccount(int accountIndex);
+    /** 
+     * @brief  Verify the precense of wallet.json file
+     * @param fs spiffs variable
+     * @return  Success
+     */
     bool isJson(fs::FS& fs);
+    /** 
+    * @brief  Verify the the creation of wallet from the file
+    * @return  Success
+    */
     bool isWalletcreated();
+    /** 
+    * @brief Get adapt the .json in a string
+    * @param  fs SPIFFS pointer
+    * @return  the json in a string dormat
+    */
+    std::string getWalletJson(fs::FS& fs);
+    /** 
+    * @brief Get adapt the .json in a string
+    * @param fs SPIFFS pointer
+    * @param txt the text we want to write
+    * @return  the json in a string dormat
+    */
+    void setWalletJson(fs::FS& fs, std::string txt);
 
 private:
     std::string masterUser; // Contain the user of the wallet
@@ -78,5 +100,5 @@ private:
     std::vector<std::string> mainkey; // Contain the cipher mainkey
     std::vector<std::string> keys; // Contain the mainkey
     bool lock; // Determine if the wallet is open
-    int nbit; // Determine the number bit of encryption
+    int nbytes; // Determine the number bit of encryption
 };
