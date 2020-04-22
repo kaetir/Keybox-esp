@@ -49,6 +49,7 @@ Login.struct:
 - sendToComputer
 - set_Lang language(FR, EN, GE...)
 - connect password
+- hotspot
 
 ## List of funct2:
 - getAccountlist
@@ -57,4 +58,7 @@ Login.struct:
 - getAccountName
 - getAccountUsername
 - getAccountPassword
+- getServerIP
+- getWifiName
+- getWifiPassword
 - getServerStatus

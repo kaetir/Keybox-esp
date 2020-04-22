@@ -22,7 +22,10 @@
       View : +clear_buffer()
       
       class Model
-      Model : -wifi_list : vector<vector<string>>
+      Model : -my_wifi : wifi_keybox
+      Model : -my_webserver : https_server_keybox*
+      Model : -Server_task : xTaskHandle
+      Model : -wifi_list : vector<string>
       Model : -current_server : vector<string>
       Model : -locker : vector<vector<string>>
       Model : -is_hotspot : bool
@@ -71,7 +74,6 @@
       Controller : -model : Model*
       Controller : -keyboard : Keyboard*
       Controller : -inputs : Inputs*
-      Controller : -spf : SPIFFS
       Controller : -cursor_position : int
       Controller : -line_number_of_choices : vector<int>
       Controller : -menu_lines : vector<string>
@@ -83,6 +85,7 @@
       Controller : -input_fields : map<string, string>
       Controller : -language : string
       Controller : -first_boot : bool
+      Controller : -isWalletCreated : bool
       Controller : -selected_wifi : int
       Controller : -update_display()
       Controller : -load_menu()
