@@ -2,7 +2,8 @@
 
 ```mermaid
 stateDiagram
-Setup : Choose your language (only at the first boot)
+state fork_state <<fork>>
+First_boot : Choose your language (only at the first boot)
 Welcome_menu : Welcome menu
 Login : Login menu (Username + Password)
 Main_menu : Main menu
@@ -19,8 +20,12 @@ New_password : New Password
 Language : Choose your Language
 connect_wifi : Connect to the selected Wifi
 wifi_list : List of all wifi available
+Wifi_Hotspot : Display informations of the Wallet website via the Wifi Hotspot
 
-Setup --> Welcome_menu
+[*] --> fork_state
+fork_state --> First_boot
+fork_state --> Welcome_menu
+First_boot --> Wifi_Hotspot
 Welcome_menu --> Login
 Login --> Main_menu
 Main_menu --> Web_server
