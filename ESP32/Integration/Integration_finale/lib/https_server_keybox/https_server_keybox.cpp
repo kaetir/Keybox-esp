@@ -26,49 +26,26 @@ https_server_keybox::~https_server_keybox() {}
  * the iterator interface to access them, which is useful if you do not know the
  * paramter names in adavance.
  */
-void handleRessources(httpsserver::HTTPRequest* req,
-                      httpsserver::HTTPResponse* res) {
-  // A word of warning: In this example, we use the query parameters and
-  // directly print them into the HTML output. We do this to simplify the demo.
-  // NEVER do this in a real application, as it allows cross-site-scripting.
-  res->setHeader("Content-Type", "text/html");
-
-  res->println(
-      "<!DOCTYPE html><html><head><title>Query Parameter "
-      "Demo</title></head><body><p>The following query paramters have been "
-      "set:</p>");
-
-  // Start a table to display the parameters
-  res->println(
-      "<table style=\"border:1px solid black "
-      "collapse;\"><tr><th>Key</th><th>Value</th></tr>");
-
+void handleParams(httpsserver::HTTPRequest* req,
+                  httpsserver::HTTPResponse* res) {
   // Iterate over the parameters. For more information, read about the C++
   // standard template library, especially about vectors and iterators.
   httpsserver::ResourceParameters* params = req->getParams();
   for (auto it = params->beginQueryParameters();
        it != params->endQueryParameters(); ++it) {
-    res->print("<tr><td>");
-
     // The iterator yields std::pairs of std::strings. The first value contains
     // the parameter key
     res->printStd((*it).first);
-    res->print("</td><td>");
-
+    res->print(" : ");
     // and the second value contains the parameter value
     res->printStd((*it).second);
-    res->println("</td></tr>");
   }
-  res->println("</table>");
-
   // You can retrieve the total parameter count from the parameters instance:
   res->print("<p>There are a total of ");
   res->print(params->getQueryParameterCount());
   res->print(" parameters, with ");
   res->print(params->getQueryParameterCount(true));
   res->println(" unique keys.</p>");
-
-  res->println("<p>Go <a href=\"/\">back to main page</a>.</p></body></html>");
 }
 
 /**
@@ -78,10 +55,10 @@ void handleRessources(httpsserver::HTTPRequest* req,
  */
 void handleSPIFFS(httpsserver::HTTPRequest* req,
                   httpsserver::HTTPResponse* res) {
-  if (!wallet2->isWalletcreated()) {  // true if usable, false if poop
-    res->println("PAS DE WALLET");
-    return;
-  }
+  // if (!wallet2->isWalletcreated()) {  // true if usable, false if poop
+  //   res->println("PAS DE WALLET");
+  //   return;
+  // }
 
   // We only handle GET here
   if (req->getMethod() == "GET" || req->getMethod() == "POST") {
@@ -90,7 +67,7 @@ void handleSPIFFS(httpsserver::HTTPRequest* req,
         req->getRequestString() == "/" ? "/index.htm" : req->getRequestString();
 
     // Try to open the file
-    std::string filename = std::string("") + reqFile;
+    std::string filename = std::string("/web") + reqFile;
 
     // Check if the file exists
     if (!SPIFFS.exists(filename.c_str())) {
@@ -138,6 +115,44 @@ void handleSPIFFS(httpsserver::HTTPRequest* req,
   }
 }
 
+/**
+ * @brief fonction for the login page reception
+ *
+ */
+void handleLogin(httpsserver::HTTPRequest* req,
+                 httpsserver::HTTPResponse* res) {}
+
+/**
+ * @brief fonction for the create Wallet page
+ *
+ */
+void handleCreate(httpsserver::HTTPRequest* req,
+                  httpsserver::HTTPResponse* res) {
+  std::string username, password;
+  std::vector<std::pair<std::string, std::string>> params;
+  byte buffer[1024];
+  Serial.println("Creating the wallet");
+
+  req->readBytes(buffer, 1024);
+  params = https_server_keybox::decodeUrlEncode((char*)buffer);
+
+  for (auto p : params) {
+    if (p.first == "name") username = p.second;
+    if (p.first == "main_password") password = p.second;
+  }
+
+  if (username.length() > 0 && password.length() > 0) {
+    wallet2->createWallet(username, password);
+    wallet2->addAccount("google", "thibault", "googlePassword");
+    std::string site = wallet2->getAccounts()[0][0];
+    std::string user = wallet2->getAccounts()[0][1];
+    std::string passwd = wallet2->getAccounts()[0][2];
+    res->printStd(site);
+    res->printStd(user);
+    res->printStd(passwd);
+  }
+}
+
 void https_server_keybox::serverTask(void* params) {
   // In the separate task we first do everything that we would have done in
   // the setup() function, if we would run the server synchronously.
@@ -152,18 +167,24 @@ void https_server_keybox::serverTask(void* params) {
   httpsserver::ResourceNode* spiffsNode =
       new httpsserver::ResourceNode("", "", &handleSPIFFS);
   httpsserver::ResourceNode* nodeQueryDemo =
-      new httpsserver::ResourceNode("/index", "GET", &handleRessources);
+      new httpsserver::ResourceNode("/index", "GET", &handleParams);
+  httpsserver::ResourceNode* nodeLogin =
+      new httpsserver::ResourceNode("/login", "POST", &handleLogin);
+  httpsserver::ResourceNode* nodeCreate =
+      new httpsserver::ResourceNode("/create", "POST", &handleCreate);
 
   // Add nodes to the server
   // We register the SPIFFS handler as the default node, so every request that
   // does not hit any other node will be redirected to the file system.
   ((https_server_keybox*)params)->secureServer.setDefaultNode(spiffsNode);
   ((https_server_keybox*)params)->secureServer.registerNode(nodeQueryDemo);
+  ((https_server_keybox*)params)->secureServer.registerNode(nodeLogin);
+  ((https_server_keybox*)params)->secureServer.registerNode(nodeCreate);
 
-  Serial.println("Starting server...");
+  // Serial.println("Starting server...");
   ((https_server_keybox*)params)->secureServer.start();
   if (((https_server_keybox*)params)->secureServer.isRunning()) {
-    Serial.println("Server ready.");
+    // Serial.println("Server ready.");
 
     // "loop()" function of the separate task
     while (true) {
@@ -173,4 +194,23 @@ void https_server_keybox::serverTask(void* params) {
       delay(10);
     }
   }
+}
+
+std::vector<std::pair<std::string, std::string>>
+https_server_keybox::decodeUrlEncode(char* url) {
+  std::vector<std::pair<std::string, std::string>> output;
+  std::vector<std::string> keyValues;
+
+  char* pch = strtok(url, "&");
+  while (pch != NULL) {
+    keyValues.push_back(pch);
+    pch = strtok(NULL, "&");
+  }
+
+  for (auto kv : keyValues) {
+    output.push_back(std::make_pair<std::string, std::string>(
+        strtok((char*)kv.c_str(), "="), strtok(NULL, "=")));
+  }
+
+  return output;
 }

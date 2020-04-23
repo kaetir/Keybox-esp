@@ -14,15 +14,41 @@
 #include <HTTPSServer.hpp>
 #include <SSLCert.hpp>
 
+// manipulations of data
+#include <stdio.h>
+
+#include <vector>
+
 // We will use SPIFFS and FS
 #include "FS.h"
 #include "SPIFFS.h"
 #include "Wallet.h"
 
 // Declare some handler functions for the various URLs on the server
-void handleRessources(httpsserver::HTTPRequest* req,
-                      httpsserver::HTTPResponse* res);
+/** @brief This is a more generic demo for the query parameters. It makes use of
+ * the iterator interface to access them, which is useful if you do not know the
+ * paramter names in adavance.
+ */
+void handleParams(httpsserver::HTTPRequest* req,
+                  httpsserver::HTTPResponse* res);
+/**
+ * @brief This handler function will try to load the requested resource from
+ * SPIFFS's / folder. If the method is not GET or POST, it will throw 405, if
+ * the file is not found, it will throw 404.
+ */
 void handleSPIFFS(httpsserver::HTTPRequest* req,
+                  httpsserver::HTTPResponse* res);
+/**
+ * @brief fonction for the login page reception
+ *
+ */
+void handleLogin(httpsserver::HTTPRequest* req, httpsserver::HTTPResponse* res);
+
+/**
+ * @brief fonction for the create Wallet page
+ *
+ */
+void handleCreate(httpsserver::HTTPRequest* req,
                   httpsserver::HTTPResponse* res);
 
 class https_server_keybox {
@@ -52,6 +78,13 @@ class https_server_keybox {
    * @param params
    */
   static void serverTask(void* params);
+  /**
+   * @brief decode url encoded format from body of post request
+   *
+   * @return std::vector<std::pair<std::string, std::string>>
+   */
+  static std::vector<std::pair<std::string, std::string>> decodeUrlEncode(
+      char*);
 };
 
 #endif
