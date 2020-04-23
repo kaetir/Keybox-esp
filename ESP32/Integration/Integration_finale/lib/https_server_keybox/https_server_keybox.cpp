@@ -1,22 +1,20 @@
 #include "https_server_keybox.h"
 
-Wallet* wallet2;
+Wallet *wallet2;
 // We need to specify some content-type mapping, so the resources get delivered
 // with the right content type and are displayed correctly in the browser
 char contentTypes[][2][32] = {
-    {".htm", "text/html"},         {".html", "text/html"},
-    {".css", "text/css"},          {".js", "application/javascript"},
-    {".json", "application/json"}, {".png", "image/png"},
-    {".jpg", "image/jpg"},         {"", ""}};
+    {".htm", "text/html"}, {".html", "text/html"}, {".css", "text/css"}, {".js", "application/javascript"}, {".json", "application/json"}, {".png", "image/png"}, {".jpg", "image/jpg"}, {"", ""}};
 
 // Include certificate data (see note above)
 #include "cert.h"
 #include "private_key.h"
 
-https_server_keybox::https_server_keybox(Wallet* w)
+https_server_keybox::https_server_keybox(Wallet *w)
     : cert(example_crt_DER, example_crt_DER_len, example_key_DER,
            example_key_DER_len),
-      secureServer(&cert) {
+      secureServer(&cert)
+{
   wallet2 = w;
 }
 
@@ -26,13 +24,15 @@ https_server_keybox::~https_server_keybox() {}
  * the iterator interface to access them, which is useful if you do not know the
  * paramter names in adavance.
  */
-void handleParams(httpsserver::HTTPRequest* req,
-                  httpsserver::HTTPResponse* res) {
+void handleParams(httpsserver::HTTPRequest *req,
+                  httpsserver::HTTPResponse *res)
+{
   // Iterate over the parameters. For more information, read about the C++
   // standard template library, especially about vectors and iterators.
-  httpsserver::ResourceParameters* params = req->getParams();
+  httpsserver::ResourceParameters *params = req->getParams();
   for (auto it = params->beginQueryParameters();
-       it != params->endQueryParameters(); ++it) {
+       it != params->endQueryParameters(); ++it)
+  {
     // The iterator yields std::pairs of std::strings. The first value contains
     // the parameter key
     res->printStd((*it).first);
@@ -53,15 +53,17 @@ void handleParams(httpsserver::HTTPRequest* req,
  * SPIFFS's / folder. If the method is not GET or POST, it will throw 405, if
  * the file is not found, it will throw 404.
  */
-void handleSPIFFS(httpsserver::HTTPRequest* req,
-                  httpsserver::HTTPResponse* res) {
+void handleSPIFFS(httpsserver::HTTPRequest *req,
+                  httpsserver::HTTPResponse *res)
+{
   // if (!wallet2->isWalletcreated()) {  // true if usable, false if poop
   //   res->println("PAS DE WALLET");
   //   return;
   // }
 
   // We only handle GET here
-  if (req->getMethod() == "GET" || req->getMethod() == "POST") {
+  if (req->getMethod() == "GET" || req->getMethod() == "POST")
+  {
     // Redirect / to /index.html
     std::string reqFile =
         req->getRequestString() == "/" ? "/index.htm" : req->getRequestString();
@@ -70,7 +72,8 @@ void handleSPIFFS(httpsserver::HTTPRequest* req,
     std::string filename = std::string("/web") + reqFile;
 
     // Check if the file exists
-    if (!SPIFFS.exists(filename.c_str())) {
+    if (!SPIFFS.exists(filename.c_str()))
+    {
       Serial.print("File not found :");
       Serial.println(filename.c_str());
       // Send "404 Not Found" as response, as the file doesn't seem to exist
@@ -88,8 +91,10 @@ void handleSPIFFS(httpsserver::HTTPRequest* req,
     // Content-Type is guessed using the definition of the contentTypes-table
     // defined above
     int cTypeIdx = 0;
-    do {
-      if (reqFile.rfind(contentTypes[cTypeIdx][0]) != std::string::npos) {
+    do
+    {
+      if (reqFile.rfind(contentTypes[cTypeIdx][0]) != std::string::npos)
+      {
         res->setHeader("Content-Type", contentTypes[cTypeIdx][1]);
         break;
       }
@@ -99,13 +104,16 @@ void handleSPIFFS(httpsserver::HTTPRequest* req,
     // Read the file and write it to the response
     uint8_t buffer[256];
     size_t length = 0;
-    do {
+    do
+    {
       length = file.read(buffer, 256);
       res->write(buffer, length);
     } while (length > 0);
 
     file.close();
-  } else {
+  }
+  else
+  {
     // If there's any body, discard it
     req->discardRequestBody();
     // Send "405 Method not allowed" as response
@@ -119,52 +127,103 @@ void handleSPIFFS(httpsserver::HTTPRequest* req,
  * @brief fonction for the login page reception
  *
  */
-void handleLogin(httpsserver::HTTPRequest* req,
-                 httpsserver::HTTPResponse* res) {}
+void handleLogin(httpsserver::HTTPRequest *req,
+                 httpsserver::HTTPResponse *res) {}
 
 /**
  * @brief fonction for the create Wallet page
  *
  */
-void handleCreate(httpsserver::HTTPRequest* req,
-                  httpsserver::HTTPResponse* res) {
+void handleCreate(httpsserver::HTTPRequest *req,
+                  httpsserver::HTTPResponse *res)
+{
   std::string username, password;
   std::vector<std::pair<std::string, std::string>> params;
   byte buffer[1024];
 
   req->readBytes(buffer, 1024);
-  params = https_server_keybox::decodeUrlEncode((char*)buffer);
+  params = https_server_keybox::decodeUrlEncode((char *)buffer);
 
-  for (auto p : params) {
-    if (p.first == "name") username = p.second;
-    if (p.first == "main_password") password = p.second;
+  for (auto p : params)
+  {
+    if (p.first == "name")
+      username = p.second;
+    if (p.first == "main_password")
+      password = p.second;
   }
 
-  if (username.length() > 0 && password.length() > 0) {
+  if (username.length() > 0 && password.length() > 0)
+  {
     Serial.println("Creating the wallet");
     wallet2->createWallet(username, password);
-  
+
     Serial.println("Unlock");
     wallet2->unlock(password);
-  
-    Serial.println("Add accounts");
-    wallet2->addAccount("google", "thibault", "googlePassword");
-    wallet2->addAccount("pornhub", "tantonin", "grosZizi69");
-
-    Serial.println("Get accounts");
-    std::vector<std::vector<std::string>> tmp_acc = wallet2->getAccounts();
-    for(auto a : tmp_acc){
-      for(auto b : a){
-        Serial.println(b.c_str());
-      }
-      res->print(a[0].c_str());
-    }
-
-    
   }
 }
 
-void https_server_keybox::serverTask(void* params) {
+void handleCreateAccount(httpsserver::HTTPRequest *req,
+                        httpsserver::HTTPResponse *res)
+{
+  Serial.println("Add account");
+  std::vector<std::pair<std::string, std::string>> params;
+  byte buffer[1024];
+
+  req->readBytes(buffer, 1024);
+  params = https_server_keybox::decodeUrlEncode((char *)buffer);
+
+  std::string username, password, site;
+  for (auto p : params){
+    if(p.first == "site")
+      site = p.second;
+    if (p.first == "username")
+      username = p.second;
+    if (p.first == "password")
+      password = p.second;
+  }
+
+  if (username.length() > 0 && password.length() > 0 && site.length() > 0)
+    wallet2->addAccount(site, username , password);
+  
+res->print("account added ");
+ 
+}
+
+/**
+ * @brief reply to the request with an array of acounts
+ *  
+ */
+void handleGetAccounts(httpsserver::HTTPRequest* req,
+                  httpsserver::HTTPResponse* res){  
+  Serial.println("Get accounts");
+
+  std::vector<std::vector<std::string>> tmp_acc = wallet2->getAccounts();
+  for (auto a : tmp_acc){
+    for (auto b : a){
+      res->print(b.c_str());
+      res->print(" ");
+    }
+    res->print("\n");
+  }
+
+}
+
+void handleDeleteAccount(httpsserver::HTTPRequest* req,
+                  httpsserver::HTTPResponse* res){
+
+}
+
+void handleLock(httpsserver::HTTPRequest* req,
+                  httpsserver::HTTPResponse* res){
+    wallet2->saveWallet();
+    ESP.restart();
+}
+
+
+
+
+void https_server_keybox::serverTask(void *params)
+{
   // In the separate task we first do everything that we would have done in
   // the setup() function, if we would run the server synchronously.
 
@@ -175,32 +234,51 @@ void https_server_keybox::serverTask(void* params) {
   // locks or mutexes.
 
   // Create nodes
-  httpsserver::ResourceNode* spiffsNode =
+  httpsserver::ResourceNode *spiffsNode =
       new httpsserver::ResourceNode("", "", &handleSPIFFS);
-  httpsserver::ResourceNode* nodeQueryDemo =
+  httpsserver::ResourceNode *nodeQueryDemo =
       new httpsserver::ResourceNode("/index", "GET", &handleParams);
-  httpsserver::ResourceNode* nodeLogin =
+  httpsserver::ResourceNode *nodeLogin =
       new httpsserver::ResourceNode("/login", "POST", &handleLogin);
-  httpsserver::ResourceNode* nodeCreate =
+  httpsserver::ResourceNode *nodeCreate =
       new httpsserver::ResourceNode("/create", "POST", &handleCreate);
+  httpsserver::ResourceNode *nodeCreateAccount =
+      new httpsserver::ResourceNode("/createAcc", "POST", &handleCreateAccount);
+  httpsserver::ResourceNode *nodeGetAccounts =
+      new httpsserver::ResourceNode("/getAcc", "GET", &handleGetAccounts);
+  httpsserver::ResourceNode *nodeDelAccount =
+      new httpsserver::ResourceNode("/delAcc", "POST", &handleDeleteAccount);  
+  httpsserver::ResourceNode *nodeLock =
+      new httpsserver::ResourceNode("/lock", "GET", &handleLock);
+  
+  
+
 
   // Add nodes to the server
   // We register the SPIFFS handler as the default node, so every request that
   // does not hit any other node will be redirected to the file system.
-  ((https_server_keybox*)params)->secureServer.setDefaultNode(spiffsNode);
-  ((https_server_keybox*)params)->secureServer.registerNode(nodeQueryDemo);
-  ((https_server_keybox*)params)->secureServer.registerNode(nodeLogin);
-  ((https_server_keybox*)params)->secureServer.registerNode(nodeCreate);
+  ((https_server_keybox *)params)->secureServer.setDefaultNode(spiffsNode);
+  ((https_server_keybox *)params)->secureServer.registerNode(nodeQueryDemo);
+  ((https_server_keybox *)params)->secureServer.registerNode(nodeLogin);
+  ((https_server_keybox *)params)->secureServer.registerNode(nodeCreate);
+  ((https_server_keybox *)params)->secureServer.registerNode(nodeCreateAccount);
+  ((https_server_keybox *)params)->secureServer.registerNode(nodeGetAccounts);
+  ((https_server_keybox *)params)->secureServer.registerNode(nodeDelAccount);
+  ((https_server_keybox *)params)->secureServer.registerNode(nodeLock);
+
+
 
   // Serial.println("Starting server...");
-  ((https_server_keybox*)params)->secureServer.start();
-  if (((https_server_keybox*)params)->secureServer.isRunning()) {
+  ((https_server_keybox *)params)->secureServer.start();
+  if (((https_server_keybox *)params)->secureServer.isRunning())
+  {
     // Serial.println("Server ready.");
 
     // "loop()" function of the separate task
-    while (true) {
+    while (true)
+    {
       // This call will let the server do its work
-      ((https_server_keybox*)params)->secureServer.loop();
+      ((https_server_keybox *)params)->secureServer.loop();
       // Other code would go here...
       delay(10);
     }
@@ -208,19 +286,22 @@ void https_server_keybox::serverTask(void* params) {
 }
 
 std::vector<std::pair<std::string, std::string>>
-https_server_keybox::decodeUrlEncode(char* url) {
+https_server_keybox::decodeUrlEncode(char *url)
+{
   std::vector<std::pair<std::string, std::string>> output;
   std::vector<std::string> keyValues;
 
-  char* pch = strtok(url, "&");
-  while (pch != NULL) {
+  char *pch = strtok(url, "&");
+  while (pch != NULL)
+  {
     keyValues.push_back(pch);
     pch = strtok(NULL, "&");
   }
 
-  for (auto kv : keyValues) {
+  for (auto kv : keyValues)
+  {
     output.push_back(std::make_pair<std::string, std::string>(
-        strtok((char*)kv.c_str(), "="), strtok(NULL, "=")));
+        strtok((char *)kv.c_str(), "="), strtok(NULL, "=")));
   }
 
   return output;

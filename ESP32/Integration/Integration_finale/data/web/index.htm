@@ -25,7 +25,7 @@
 			<i class="fa fa-user-plus w3-xxlarge"></i>
 			<p>NewAcount</p>
 		</a>
-		<a href="#SaveAndQuit" class="w3-bar-item w3-button w3-padding-large w3-hover-black">
+		<a href="/lock" class="w3-bar-item w3-button w3-padding-large w3-hover-black">
 			<i class="fa fa-sign-out-alt w3-xxlarge"></i>
 			<p>Save and quit</p>
 		</a>
@@ -39,7 +39,7 @@
 					class="fa fa-address-book w3-xlarge"></i></a>
 			<a href="#NewAcount" class="w3-bar-item w3-button" style="width: 25%;"><i
 					class="fa fa-user-plus w3-xlarge"></i></a>
-			<a href="#SaveAndQuit" class="w3-bar-item w3-button" style="width: 25%;"><i
+			<a href="/lock" class="w3-bar-item w3-button" style="width: 25%;"><i
 					class="fa fa-sign-out-alt w3-xlarge"></i></a>
 		</div>
 	</div>
@@ -55,7 +55,14 @@
 		<div class="w3-content w3-justify w3-text-grey w3-padding-64" id="Acounts">
 			<h2 class="w3-text-light-grey">Acounts</h2>
 			<hr style="width:200px" class="w3-opacity">
-
+			
+			<table id="Acounts">
+				<thead>
+					<th>site</th>
+					<th>username</th>
+					<th>password</th>
+				</thead>
+			</table>
 
 			<!-- End Acounts Section -->
 		</div>
@@ -64,8 +71,13 @@
 		<div class="w3-padding-64 w3-content" id="NewAcount">
 			<h2 class="w3-text-light-grey">New Acount</h2>
 			<hr style="width:200px" class="w3-opacity">
+			<form action="createAcc" method="POST">
+				<input name="site" type="text">
+				<input name="username" type="text">
+				<input name="password" type="text">
+				<input type="submit" value="Press here" id="SubmitAddAcc">
+			</form>
 
-			<form action=""></form>
 
 			<!-- End NewAcount Section -->
 		</div>
@@ -74,6 +86,38 @@
 
 		<!-- END PAGE CONTENT -->
 	</div>
+
+	<script src="js/jquery.js"></script>
+	<script>
+		// $('form').submit(function () {
+		// 	$.post($(this).attr('action'), function () {
+		// 		$("#SubmitAddAcc").text("added")
+		// 	});
+		// 	return false; // prevent submitting the form
+		// });
+	
+		function fillacount(element){
+			for (let elmt of element.split("\n")){
+				$("#Acounts").append("<tr>");
+				for(let e of elmt.split(" ") ){
+					$("#Acounts").append("<td>" + e + "</td>");		
+				}
+				$("#Acounts").append("</tr>");
+
+			}
+
+
+		}
+		$.get(
+			'getAcc', // Le fichier cible côté serveur.
+			'false', // Nous utilisons false, pour dire que nous n'envoyons pas de données.
+			fillacount, // Nous renseignons uniquement le nom de la fonction de retour.
+			'plain/text' // Format des données reçues.
+			);
+		
+	
+
+	</script>
 
 </body>
 

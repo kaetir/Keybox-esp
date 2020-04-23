@@ -51,6 +51,37 @@ void handleLogin(httpsserver::HTTPRequest* req, httpsserver::HTTPResponse* res);
 void handleCreate(httpsserver::HTTPRequest* req,
                   httpsserver::HTTPResponse* res);
 
+/**
+ * @brief function for creating an acount in the wallet 
+ * 
+ */
+void handleCreateAccount(httpsserver::HTTPRequest* req,
+                  httpsserver::HTTPResponse* res);
+
+/**
+ * @brief reply to the request with an array of acounts
+ *  
+ */
+void handleGetAccounts(httpsserver::HTTPRequest* req,
+                  httpsserver::HTTPResponse* res);
+
+
+/**
+ * @brief delete an account
+ *  
+ */
+void handleDeleteAccount(httpsserver::HTTPRequest* req,
+                  httpsserver::HTTPResponse* res);
+
+/**
+ * @brief lock and save the file 
+ *  
+ */
+void handleLock(httpsserver::HTTPRequest* req,
+                  httpsserver::HTTPResponse* res);
+
+
+
 class https_server_keybox {
  private:
   // Create an SSL-enabled server that uses the certificate

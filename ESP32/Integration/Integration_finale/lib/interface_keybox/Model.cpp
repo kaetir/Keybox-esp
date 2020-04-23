@@ -229,9 +229,8 @@ std::vector<std::string> Model::getCurrentWifi() {
 
 bool Model::logout() {
   // LOCK THE ACCOUNT
-  this->wallet->locked();
-  this->locker.clear();
-  this->turn_wifi_Off();
+  this->wallet->saveWallet();
+  ESP.restart();
   return true;
 }
 

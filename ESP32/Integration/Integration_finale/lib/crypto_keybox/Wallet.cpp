@@ -140,6 +140,8 @@ void Wallet::saveWallet()
     serializeJson(doc, output);
     //Save the data
     setWalletJson(SPIFFS, output);
+
+    delay(100);
 }
 
 void Wallet::createWallet(std::string masterUser, std::string pwd)
@@ -430,10 +432,9 @@ bool Wallet::changeUsername(int accountIndex, std::string newUsername)
 {
     if (this->lock == false) {
         if (0 <= accountIndex && accountIndex < this->strongbox.size()) {
-            return false;
+            this->strongbox[accountIndex][1] = newUsername;
+            return true;
         }
-        this->strongbox[accountIndex][1] = newUsername;
-        return true;
     }
     return false;
 }

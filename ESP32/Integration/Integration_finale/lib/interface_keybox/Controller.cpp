@@ -90,6 +90,7 @@ Controller::Controller() {
     this->current_menu = "First_Boot";
   } else {
     this->language = conf[0];
+    wallet->initWalletJson();
 
     // LOADING THE WELCOME MENU
     this->first_boot = false;
@@ -569,9 +570,11 @@ void Controller::select_choice() {
               this->input_fields[this->inputs_function[index_of_cursor][1]];
           std::string password =
               this->input_fields[this->inputs_function[index_of_cursor][2]];
-
+          
           if (this->model->login(password)) {
             is_valid = true;
+          }else{
+            Serial.println("BAD PASSWORD");
           }
         } else if (funct == "logoff")  // TRY TO LOG OUT
         {
