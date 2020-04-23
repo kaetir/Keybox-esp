@@ -131,7 +131,6 @@ void handleCreate(httpsserver::HTTPRequest* req,
   std::string username, password;
   std::vector<std::pair<std::string, std::string>> params;
   byte buffer[1024];
-  Serial.println("Creating the wallet");
 
   req->readBytes(buffer, 1024);
   params = https_server_keybox::decodeUrlEncode((char*)buffer);
@@ -142,14 +141,26 @@ void handleCreate(httpsserver::HTTPRequest* req,
   }
 
   if (username.length() > 0 && password.length() > 0) {
+    Serial.println("Creating the wallet");
     wallet2->createWallet(username, password);
+  
+    Serial.println("Unlock");
+    wallet2->unlock(password);
+  
+    Serial.println("Add accounts");
     wallet2->addAccount("google", "thibault", "googlePassword");
-    std::string site = wallet2->getAccounts()[0][0];
-    std::string user = wallet2->getAccounts()[0][1];
-    std::string passwd = wallet2->getAccounts()[0][2];
-    res->printStd(site);
-    res->printStd(user);
-    res->printStd(passwd);
+    wallet2->addAccount("pornhub", "tantonin", "grosZizi69");
+
+    Serial.println("Get accounts");
+    std::vector<std::vector<std::string>> tmp_acc = wallet2->getAccounts();
+    for(auto a : tmp_acc){
+      for(auto b : a){
+        Serial.println(b.c_str());
+      }
+      res->print(a[0].c_str());
+    }
+
+    
   }
 }
 

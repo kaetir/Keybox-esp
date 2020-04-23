@@ -393,15 +393,12 @@ std::vector<std::vector<std::string>> Wallet::getAccounts()
             std::string str1 = acc[2].substr(0, 16);
             std::string str2 = acc[2].substr(16);
 
-            unsigned char ttest[17];
-            unsigned char t2test[17];
+            unsigned char ttest[16];
+            unsigned char t2test[16];
             for (int j = 0; j < 16; j++) {
                 ttest[j] = str1[j];
                 t2test[j] = str2[j];
             }
-            ttest[16] = '\0';
-            t2test[16] = '\0';
-
             unsigned char decipheredTextOutput1[16];
             unsigned char decipheredTextOutput2[16];
 
@@ -412,13 +409,16 @@ std::vector<std::vector<std::string>> Wallet::getAccounts()
             std::string tpwd2(reinterpret_cast<const char*>(decipheredTextOutput2));
 
             std::string pwd = tpwd1 + tpwd2;
+            // Serial.println(pwd.c_str());
             int c = 0;
             while (pwd[c] != ' ') {
                 c++;
             }
+            
             account.push_back(acc[0]);
             account.push_back(acc[1]);
             account.push_back(pwd.substr(0, c));
+            
             accounts.push_back(account);
         }
         return accounts;
