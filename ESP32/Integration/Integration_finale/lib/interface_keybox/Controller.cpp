@@ -573,8 +573,6 @@ void Controller::select_choice() {
           
           if (this->model->login(password)) {
             is_valid = true;
-          }else{
-            Serial.println("BAD PASSWORD");
           }
         } else if (funct == "logoff")  // TRY TO LOG OUT
         {
