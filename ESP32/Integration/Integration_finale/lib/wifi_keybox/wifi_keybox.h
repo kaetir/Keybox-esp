@@ -19,12 +19,11 @@
 #ifndef WIFI_KEYBOX_H
 #define WIFI_KEYBOX_H
 
-class wifi_keybox
-{
-private:
+class wifi_keybox {
+ private:
   /* data*/
 
-public:
+ public:
   wifi_keybox();
   ~wifi_keybox();
 
