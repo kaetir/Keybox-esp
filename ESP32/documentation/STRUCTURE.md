@@ -42,7 +42,7 @@ Login.struct:
 ## List of funct1 and their arguments:
 - add_account name username password
 - deleteAccount
-- login user password
+- login password
 - logoff
 - setAccountPassword password
 - setAccountUsername username
