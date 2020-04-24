@@ -184,6 +184,7 @@ public:
 
     /**
    * @brief  Get the wifi key in the esp
+   * @return A string containing the Wifi password if found in the list
    */
     std::string get_Wifi_Key(fs::FS &fs, int index);
 };
