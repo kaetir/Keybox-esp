@@ -126,26 +126,46 @@ void Controller::init_buffer()
   this->view->clear_buffer();
 
   // FILLING THE BUFFER WITH THE MENU LINES
-  for (int i = 0; i < menu_lines.size(); i++)
+  this->cursor_position = 0;
+
+  if (this->entries.size() != 0)
   {
-    if (i < NUM_LINE)
+    for (int i = 0; i < menu_lines.size(); i++)
     {
-      if (i == 0 && this->entries[0] == 0)
+      if (i < NUM_LINE)
       {
-        this->view->draw_text("->" + this->menu_lines[i], i, 0);
+        if (this->entries[0] == i)
+        {
+          this->cursor_position = i;
+          this->view->draw_text("->" + this->menu_lines[i], i, 0);
+        }
+        else
+        {
+          this->view->draw_text(this->menu_lines[i], i, 0);
+        }
+        this->buffer.push_back(i);
       }
       else
       {
-        this->view->draw_text(this->menu_lines[i], i, 0);
+        break;
       }
-      this->buffer.push_back(i);
-    }
-    else
-    {
-      break;
     }
   }
-  this->cursor_position = 0;
+  else
+  {
+    for (int i = 0; i < menu_lines.size(); i++)
+    {
+      if (i < NUM_LINE)
+      {
+        this->view->draw_text(this->menu_lines[i], i, 0);
+        this->buffer.push_back(i);
+      }
+      else
+      {
+        break;
+      }
+    }
+  }
 
   // DISPLAY THE BUFFER OF THE MENU
   this->view->show();
@@ -438,6 +458,16 @@ void Controller::scroll(int a)
         {
           this->buffer[i]--;
         }
+
+        for (int i = 0; i < this->buffer.size();
+             i++) // CHECK THE ENTRIES POSITION
+        {
+          if (std::binary_search(this->entries.begin(), this->entries.end(), this->buffer[i]) == true)
+          {
+            this->cursor_position = this->buffer[i];
+            break;
+          }
+        }
       }
     }
     else // THE CURSOR IS AT THE TOP OF THE BUFFER (CASE 3)
@@ -449,6 +479,16 @@ void Controller::scroll(int a)
              i++) // MOVE THE MENU BUFFER UP
         {
           this->buffer[i]--;
+        }
+
+        for (int i = 0; i < this->buffer.size();
+             i++) // CHECK THE ENTRIES POSITION
+        {
+          if (std::binary_search(this->entries.begin(), this->entries.end(), this->buffer[i]) == true)
+          {
+            this->cursor_position = this->buffer[i];
+            break;
+          }
         }
       }
     }
@@ -492,6 +532,16 @@ void Controller::scroll(int a)
         {
           this->buffer[i]++;
         }
+
+        for (int i = this->buffer.size() - 1; i >= 0;
+             i--) // CHECK THE ENTRIES POSITION
+        {
+          if (std::binary_search(this->entries.begin(), this->entries.end(), this->buffer[i]) == true)
+          {
+            this->cursor_position = this->buffer[i];
+            break;
+          }
+        }
       }
     }
     else
@@ -505,6 +555,16 @@ void Controller::scroll(int a)
              i++) // MOVE THE MENU BUFFER DOWN
         {
           this->buffer[i]++;
+        }
+
+        for (int i = this->buffer.size() - 1; i >= 0;
+             i--) // CHECK THE ENTRIES POSITION
+        {
+          if (std::binary_search(this->entries.begin(), this->entries.end(), this->buffer[i]) == true)
+          {
+            this->cursor_position = this->buffer[i];
+            break;
+          }
         }
       }
     }
