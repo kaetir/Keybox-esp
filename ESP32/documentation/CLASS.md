@@ -50,6 +50,8 @@
       Model : +getCurrentWifi()
       Model : +logout()
       Model : +send_ids()
+      Model : +save_Wifi_Key()
+      Model : +get_Wifi_Key()
       
       class Inputs
       Inputs : +Inputs()
@@ -75,7 +77,7 @@
       Controller : -keyboard : Keyboard*
       Controller : -inputs : Inputs*
       Controller : -cursor_position : int
-      Controller : -line_number_of_choices : vector<int>
+      Controller : -entries : vector<int>
       Controller : -menu_lines : vector<string>
       Controller : -buffer : vector<int>
       Controller : -current_menu : string
@@ -84,7 +86,7 @@
       Controller : -inputs_link : vector<string>
       Controller : -input_fields : map<string, string>
       Controller : -language : string
-      Controller : -first_boot : bool
+      Controller : -stop_back : bool
       Controller : -isWalletCreated : bool
       Controller : -selected_wifi : int
       Controller : -update_display()
