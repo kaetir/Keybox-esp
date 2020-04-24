@@ -19,11 +19,12 @@
 #ifndef WIFI_KEYBOX_H
 #define WIFI_KEYBOX_H
 
-class wifi_keybox {
- private:
+class wifi_keybox
+{
+private:
   /* data*/
 
- public:
+public:
   wifi_keybox();
   ~wifi_keybox();
 
@@ -33,7 +34,7 @@ class wifi_keybox {
    * @param ssid
    * @param password
    */
-  void connect_wifi(const char *ssid, const char *password);
+  bool connect_wifi(const char *ssid, const char *password);
 
   /**
    * @brief connect_wifi pour String
@@ -41,7 +42,7 @@ class wifi_keybox {
    * @param ssid
    * @param password
    */
-  void connect_wifi(String ssid, String password);
+  bool connect_wifi(String ssid, String password);
 
   /**
    * @brief disconnect esp32 from wifi network
