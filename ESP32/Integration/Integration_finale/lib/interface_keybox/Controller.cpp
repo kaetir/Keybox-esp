@@ -298,9 +298,16 @@ void Controller::load_menu(std::string menu_name)
 
         for (int j = 0; j < account_list.size(); j++)
         {
-          this->menu_lines.push_back(account_list[j]);
-          this->entries.push_back(menu_lines.size() - 1);
+          if (j == 0)
+          {
+            this->menu_lines[num] = account_list[j];
+          }
+          else
+          {
+            this->menu_lines.push_back(account_list[j]);
+          }
 
+          this->entries.push_back(menu_lines.size() - 1);
           std::stringstream int_to_string;
           int_to_string << j;
 
@@ -316,9 +323,16 @@ void Controller::load_menu(std::string menu_name)
 
         for (int j = 0; j < wifi_list.size(); j++)
         {
-          this->menu_lines.push_back(wifi_list[j]);
-          this->entries.push_back(menu_lines.size() - 1);
+          if (j == 0)
+          {
+            this->menu_lines[num] = wifi_list[j];
+          }
+          else
+          {
+            this->menu_lines.push_back(wifi_list[j]);
+          }
 
+          this->entries.push_back(menu_lines.size() - 1);
           std::stringstream int_to_string;
           int_to_string << j;
 
