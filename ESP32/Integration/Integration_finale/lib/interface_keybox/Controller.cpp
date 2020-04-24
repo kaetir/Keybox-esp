@@ -70,14 +70,14 @@ Controller::Controller()
   if (conf.size() == 0 ||
       this->isWalletCreated == false) // FIRST BOOT DETECTED
   {
-    this->first_boot = true;
+    this->stop_back = true;
     this->menu_lines.push_back("LANGUAGE:");
 
     std::vector<std::string> tmp_vect;
     for (int i = 0; i < Lang.size(); i++)
     {
       this->menu_lines.push_back(Lang[i]);
-      this->line_number_of_choices.push_back(this->menu_lines.size() - 1);
+      this->entries.push_back(this->menu_lines.size() - 1);
 
       tmp_vect = {"First_boot", Lang[i]};
       this->inputs_function.push_back(tmp_vect);
@@ -99,7 +99,7 @@ Controller::Controller()
     wallet->initWalletJson();
 
     // LOADING THE WELCOME MENU
-    this->first_boot = false;
+    this->stop_back = false;
     this->load_menu(filenames[0]);
     this->current_menu = filenames[0];
 #ifdef DEBUG_MODE
@@ -130,7 +130,7 @@ void Controller::init_buffer()
   {
     if (i < NUM_LINE)
     {
-      if (i == 0 && this->line_number_of_choices[0] == 0)
+      if (i == 0 && this->entries[0] == 0)
       {
         this->view->draw_text("->" + this->menu_lines[i], i, 0);
       }
@@ -154,7 +154,7 @@ void Controller::init_buffer()
 void Controller::load_menu(std::string menu_name)
 {
   // CLEARING OF THE MENU ENTRIES
-  this->line_number_of_choices.clear();
+  this->entries.clear();
 
   // CLEARING OF THE ACTIVATIONS FUNCTION OF EACH MENU ENTRY
   this->inputs_function.clear();
@@ -198,7 +198,7 @@ void Controller::load_menu(std::string menu_name)
     {
     case '>': // LINK TO ANOTHER MENU
       ss >> menu;
-      this->line_number_of_choices.push_back(num);
+      this->entries.push_back(num);
       tmp_vect = {"None"};
       this->inputs_function.push_back(tmp_vect);
       this->inputs_link.push_back(menu);
@@ -206,7 +206,7 @@ void Controller::load_menu(std::string menu_name)
 
     case '<': // INPUT FIELD
       ss >> name;
-      this->line_number_of_choices.push_back(num);
+      this->entries.push_back(num);
       tmp_vect = {"InputField", name};
       this->inputs_function.push_back(tmp_vect);
       this->inputs_link.push_back("None");
@@ -214,7 +214,7 @@ void Controller::load_menu(std::string menu_name)
       break;
 
     case 'f': // ACTIVATE A FUNCTION BEFORE SWITCHING MENU
-      this->line_number_of_choices.push_back(num);
+      this->entries.push_back(num);
       ss >> menu >> funct;
       this->inputs_link.push_back(menu);
 
@@ -223,60 +223,51 @@ void Controller::load_menu(std::string menu_name)
       {
         ss >> arg1 >> arg2 >> arg3;
         tmp_vect = {funct, arg1, arg2, arg3};
-        this->inputs_function.push_back(tmp_vect);
       }
       else if (funct == "deleteAccount") // deleteAccount()
       {
         tmp_vect = {funct};
-        this->inputs_function.push_back(tmp_vect);
       }
       else if (funct == "login") // login(arg1:password)
       {
         ss >> arg1;
         tmp_vect = {funct, arg1};
-        this->inputs_function.push_back(tmp_vect);
       }
       else if (funct == "logoff") // logoff()
       {
         tmp_vect = {funct};
-        this->inputs_function.push_back(tmp_vect);
       }
       else if (funct ==
                "setAccountPassword") // setAccountPassword(arg1:password)
       {
         ss >> arg1;
         tmp_vect = {funct, arg1};
-        this->inputs_function.push_back(tmp_vect);
       }
       else if (funct ==
                "setAccountUsername") // setAccountUsername(arg1:username)
       {
         ss >> arg1;
         tmp_vect = {funct, arg1};
-        this->inputs_function.push_back(tmp_vect);
       }
       else if (funct == "sendToComputer") // sendToComputer()
       {
         tmp_vect = {funct};
-        this->inputs_function.push_back(tmp_vect);
       }
       else if (funct == "set_Lang")
       {
         ss >> arg1;
         tmp_vect = {funct, arg1};
-        this->inputs_function.push_back(tmp_vect);
       }
       else if (funct == "connect")
       {
         ss >> arg1;
         tmp_vect = {funct, arg1};
-        this->inputs_function.push_back(tmp_vect);
       }
       else if (funct == "hotspot")
       {
         tmp_vect = {funct};
-        this->inputs_function.push_back(tmp_vect);
       }
+      this->inputs_function.push_back(tmp_vect);
       break;
 
     case 'g': // GET FUNCTIONS
@@ -288,7 +279,7 @@ void Controller::load_menu(std::string menu_name)
         for (int j = 0; j < account_list.size(); j++)
         {
           this->menu_lines.push_back(account_list[j]);
-          this->line_number_of_choices.push_back(menu_lines.size() - 1);
+          this->entries.push_back(menu_lines.size() - 1);
 
           std::stringstream int_to_string;
           int_to_string << j;
@@ -306,7 +297,7 @@ void Controller::load_menu(std::string menu_name)
         for (int j = 0; j < wifi_list.size(); j++)
         {
           this->menu_lines.push_back(wifi_list[j]);
-          this->line_number_of_choices.push_back(menu_lines.size() - 1);
+          this->entries.push_back(menu_lines.size() - 1);
 
           std::stringstream int_to_string;
           int_to_string << j;
@@ -357,7 +348,7 @@ void Controller::load_menu(std::string menu_name)
         {
           this->load_menu("Wifi_informations");
           this->menu_lines.push_back("OFF");
-          this->line_number_of_choices.push_back(this->menu_lines.size() - 1);
+          this->entries.push_back(this->menu_lines.size() - 1);
           this->inputs_link.push_back("Web_server");
           tmp_vect = {"turn_off"};
           this->inputs_function.push_back(tmp_vect);
@@ -381,11 +372,11 @@ void Controller::load_menu(std::string menu_name)
   Serial.println("]");
 
   Serial.print("[MENU_ENTRIES]: [");
-  Serial.print(this->line_number_of_choices[0]);
-  for (int i = 1; i < this->line_number_of_choices.size(); i++)
+  Serial.print(this->entries[0]);
+  for (int i = 1; i < this->entries.size(); i++)
   {
     Serial.print(", ");
-    Serial.print(this->line_number_of_choices[i]);
+    Serial.print(this->entries[i]);
   }
   Serial.println("]");
 
@@ -428,8 +419,8 @@ void Controller::scroll(int a)
           false; // HAS FOUND AN ENTRY ABOVE THE CURSOR ACTUAL POSITION ?
       for (int i = index_of_cursor - 1; i >= 0; i--)
       {
-        if (std::binary_search(this->line_number_of_choices.begin(),
-                               this->line_number_of_choices.end(),
+        if (std::binary_search(this->entries.begin(),
+                               this->entries.end(),
                                this->buffer[i]) ==
             true) // ENTRY FOUND ABOVE THE CURSOR (CASE 1)
         {
@@ -480,8 +471,8 @@ void Controller::scroll(int a)
           false; // HAS FOUND AN ENTRY BELOW THE CURSOR ACTUAL POSITION ?
       for (int i = index_of_cursor + 1; i < this->buffer.size(); i++)
       {
-        if (std::binary_search(this->line_number_of_choices.begin(),
-                               this->line_number_of_choices.end(),
+        if (std::binary_search(this->entries.begin(),
+                               this->entries.end(),
                                this->buffer[i]) ==
             true) // ENTRY FOUND BELOW THE CURSOR (CASE 1)
         {
@@ -539,8 +530,8 @@ void Controller::update_display()
   {
     if (this->buffer[i] == this->cursor_position)
     {
-      if (std::binary_search(this->line_number_of_choices.begin(),
-                             this->line_number_of_choices.end(),
+      if (std::binary_search(this->entries.begin(),
+                             this->entries.end(),
                              this->buffer[i]) ==
           true) // THE CURSOR IS ON AN ENTRY
       {
@@ -567,8 +558,8 @@ void Controller::select_choice()
     if (this->buffer[i] ==
         this->cursor_position) // CURSOR POSITION FOUND IN THE MENU BUFFER
     {
-      if (std::binary_search(this->line_number_of_choices.begin(),
-                             this->line_number_of_choices.end(),
+      if (std::binary_search(this->entries.begin(),
+                             this->entries.end(),
                              this->buffer[i]) ==
           true) // THE CURSOR IS ON AN ENTRY
       {
@@ -579,10 +570,10 @@ void Controller::select_choice()
         bool is_valid =
             false; // SUCCESSFUL EXECUTION OF THE ACTIVATION FUNCTIONS ?
         std::vector<int>::iterator it = std::find(
-            this->line_number_of_choices.begin(),
-            this->line_number_of_choices.end(), this->cursor_position);
+            this->entries.begin(),
+            this->entries.end(), this->cursor_position);
         int index_of_cursor =
-            std::distance(this->line_number_of_choices.begin(),
+            std::distance(this->entries.begin(),
                           it); // INDEX OF THE CURSOR IN THE VECTOR OF ENTRIES
 
         std::string funct =
@@ -689,7 +680,7 @@ void Controller::select_choice()
           }
           else
           {
-            this->first_boot = false;
+            this->stop_back = false;
           }
           this->language = this->inputs_function[index_of_cursor][1];
           this->model->set_config(SPIFFS, this->language);
@@ -710,7 +701,7 @@ void Controller::select_choice()
                   this->input_fields[this->inputs_function[index_of_cursor]
                                                           [1]]) == true)
           {
-            this->first_boot = true;
+            this->stop_back = true;
             is_valid = true;
           }
         }
@@ -731,7 +722,7 @@ void Controller::select_choice()
         {
           if (this->model->emit_wifi())
           {
-            this->first_boot = true;
+            this->stop_back = true;
             is_valid = true;
           }
         }
@@ -964,7 +955,7 @@ void Controller::update()
         break;
 
       case Direction::BACK:
-        if (this->first_boot == false)
+        if (this->stop_back == false)
         {
 #ifdef DEBUG_MODE
           Serial.println("[INPUT]: BACK");
