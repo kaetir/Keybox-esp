@@ -230,7 +230,16 @@ void Controller::load_menu(std::string menu_name)
       tmp_vect = {"InputField", name};
       this->inputs_function.push_back(tmp_vect);
       this->inputs_link.push_back("None");
-      this->input_fields[name] = "";
+
+      if (name == "password" && menu_name == "Wifi_connect")
+      {
+        this->input_fields[name] = this->model->get_Wifi_key(SPIFFS, this->selected_wifi);
+        this->menu_lines[num] = this->input_fields[name];
+      }
+      else
+      {
+        this->input_fields[name] = "";
+      }
       break;
 
     case 'f': // ACTIVATE A FUNCTION BEFORE SWITCHING MENU
@@ -383,7 +392,7 @@ void Controller::load_menu(std::string menu_name)
           this->load_menu("Wifi_informations");
           this->menu_lines.push_back("OFF");
           this->entries.push_back(this->menu_lines.size() - 1);
-          this->inputs_link.push_back("Web_server");
+          this->inputs_link.push_back("None");
           tmp_vect = {"turn_off"};
           this->inputs_function.push_back(tmp_vect);
         }
@@ -714,10 +723,7 @@ void Controller::select_choice()
         }
         else if (funct == "logoff") // TRY TO LOG OUT
         {
-          if (this->model->logout())
-          {
-            is_valid = true;
-          }
+          this->model->logout();
         }
         else if (funct == "setAccountPassword") // SET A NEW PASSWORD
         {
@@ -777,6 +783,7 @@ void Controller::select_choice()
           {
             this->stop_back = true;
             is_valid = true;
+            this->model->save_Wifi_Key(SPIFFS, this->selected_wifi, this->input_fields[this->inputs_function[index_of_cursor][1]]);
           }
         }
         else if (funct == "selectWifi") // SELECT A WIFI IN THE LIST
@@ -787,10 +794,7 @@ void Controller::select_choice()
         }
         else if (funct == "turn_off") // TURN WIFI AND SERVER OFF
         {
-          if (this->model->turn_wifi_Off())
-          {
-            is_valid = true;
-          }
+          this->model->turn_wifi_Off();
         }
         else if (funct == "hotspot") // SET AS A WIFI HOTSPOT
         {

@@ -262,12 +262,11 @@ bool Model::emit_wifi()
   return true;
 }
 
-bool Model::turn_wifi_Off()
+void Model::turn_wifi_Off()
 {
   this->wallet->saveWallet();
   ESP.restart();
   //vTaskDelete(this->Server_task); //PB
-  return false;
 }
 
 std::vector<std::string> Model::getCurrentWifi()
@@ -275,15 +274,125 @@ std::vector<std::string> Model::getCurrentWifi()
   return this->current_server;
 }
 
-bool Model::logout()
+void Model::logout()
 {
   // LOCK THE ACCOUNT
   this->wallet->saveWallet();
   ESP.restart();
-  return true;
 }
 
 void Model::send_ids(int index)
 {
   // TODO
+}
+
+void Model::save_Wifi_Key(fs::FS &fs, int index, std::string pwd)
+{
+  std::string SSID = this->wifi_list[index];
+  std::vector<std::string> Wifis_SSID;
+  std::string file_str;
+
+  // OPEN THE FILE wifi_keys.txt
+  File file = fs.open("/wifi_keys.txt");
+  if (!file || file.isDirectory())
+  {
+    file.close();
+    Serial.println("ERR: FAILED TO OPEN wifi_keys.txt");
+  }
+
+  // GET THE CONTENT OF THE CONFIG FILE
+  while (file.available())
+  {
+    file_str += char(file.read());
+  }
+  file.close();
+
+  // CONVERT THE CONTENT TO AN ARRAY OF STRING
+  std::stringstream ss(file_str);
+  std::string line;
+  std::string tmp_SSID;
+  while (std::getline(ss, line))
+  {
+    tmp_SSID = line.substr(0, line.find("/"));
+    Wifis_SSID.push_back(tmp_SSID);
+  }
+
+  if (std::binary_search(Wifis_SSID.begin(), Wifis_SSID.end(), SSID) == false) //SSID NOT FOUND IN THE LIST
+  {
+    std::string added = SSID + "/" + pwd + "\n";
+    file_str += added;
+    char tmp[file_str.size() + 1];
+    std::copy(file_str.begin(), file_str.end(), tmp);
+    tmp[file_str.size()] = '\0';
+
+    const char *str = tmp;
+
+    // WRITE ON THE WIFI FILE
+    File file = fs.open("/wifi_keys.txt", FILE_WRITE);
+    if (!file)
+    {
+      file.close();
+      Serial.println("ERR: FAILED TO OPEN wifi_keys.txt");
+    }
+    else
+    {
+      if (!file.print(str))
+      {
+        Serial.println("ERR: COULD NOT WRITE ON wifi_keys.txt");
+      }
+      file.close();
+    }
+  }
+}
+
+std::string Model::get_Wifi_key(fs::FS &fs, int index)
+{
+  std::string SSID = this->wifi_list[index];
+  std::vector<std::string> Wifis_SSID;
+  std::vector<std::string> Wifis_Key;
+  std::string file_str;
+
+  // OPEN THE FILE wifi_keys.txt
+  File file = fs.open("/wifi_keys.txt");
+  if (!file || file.isDirectory())
+  {
+    file.close();
+    Serial.println("ERR: FAILED TO OPEN wifi_keys.txt");
+  }
+
+  // GET THE CONTENT OF THE CONFIG FILE
+  while (file.available())
+  {
+    file_str += char(file.read());
+  }
+  file.close();
+
+  // CONVERT THE CONTENT TO AN ARRAY OF STRING
+  std::stringstream ss(file_str);
+  std::string line;
+  std::string tmp_SSID;
+  std::string tmp_key;
+  while (std::getline(ss, line))
+  {
+    tmp_SSID = line.substr(0, line.find("/"));
+    Wifis_SSID.push_back(tmp_SSID);
+    line.erase(0, line.find("/") + 1);
+    tmp_key = line;
+    Wifis_Key.push_back(tmp_key);
+  }
+
+  std::string ret = "";
+  if (std::binary_search(Wifis_SSID.begin(), Wifis_SSID.end(), SSID) == true) //SSID NOT FOUND IN THE LIST
+  {
+    for (int i = 0; i < Wifis_SSID.size(); i++)
+    {
+      if (SSID == Wifis_SSID[i])
+      {
+        ret = Wifis_Key[i];
+        break;
+      }
+    }
+  }
+
+  return ret;
 }
