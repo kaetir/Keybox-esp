@@ -233,7 +233,7 @@ void Controller::load_menu(std::string menu_name)
 
       if (name == "password" && menu_name == "Wifi_connect")
       {
-        this->input_fields[name] = this->model->get_Wifi_key(SPIFFS, this->selected_wifi);
+        this->input_fields[name] = this->model->get_Wifi_Key(SPIFFS, this->selected_wifi);
         this->menu_lines[num] = this->input_fields[name];
       }
       else

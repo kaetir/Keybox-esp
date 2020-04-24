@@ -345,7 +345,7 @@ void Model::save_Wifi_Key(fs::FS &fs, int index, std::string pwd)
   }
 }
 
-std::string Model::get_Wifi_key(fs::FS &fs, int index)
+std::string Model::get_Wifi_Key(fs::FS &fs, int index)
 {
   std::string SSID = this->wifi_list[index];
   std::vector<std::string> Wifis_SSID;

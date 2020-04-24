@@ -185,7 +185,7 @@ public:
     /**
    * @brief  Get the wifi key in the esp
    */
-    std::string get_Wifi_key(fs::FS &fs, int index);
+    std::string get_Wifi_Key(fs::FS &fs, int index);
 };
 
 #endif // MODEL_H
