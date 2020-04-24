@@ -360,7 +360,7 @@ std::string Model::get_Wifi_Key(fs::FS &fs, int index)
     Serial.println("ERR: FAILED TO OPEN wifi_keys.txt");
   }
 
-  // GET THE CONTENT OF THE CONFIG FILE
+  // GET THE CONTENT OF THE wifi_keys.txt file
   while (file.available())
   {
     file_str += char(file.read());
