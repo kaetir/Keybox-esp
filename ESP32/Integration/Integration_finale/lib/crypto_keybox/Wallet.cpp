@@ -305,7 +305,6 @@ bool Wallet::addAccount(std::string nameAccount, std::string username, std::stri
         }
         if (pwd.length() > 16) {
             std::string pwd2 = pwd;
-            // creation of the pointers necessary
             str1 = pwd2.substr(0, 16);
             str2 = pwd2.substr(16, 16);
             if (pwd.length() != 32) {
@@ -321,6 +320,7 @@ bool Wallet::addAccount(std::string nameAccount, std::string username, std::stri
         // in order to manipulate string outside wallet we need to transform a string in a char
         int n = 16;
 
+        // ca -> string under char format in order to cipher
         char ca1[n + 1];
         strncpy(ca1, str1.c_str(), n);
         ca1[n] = '\0';
@@ -416,11 +416,11 @@ std::vector<std::vector<std::string>> Wallet::getAccounts()
             while (pwd[c] != ' ') {
                 c++;
             }
-            
+
             account.push_back(acc[0]);
             account.push_back(acc[1]);
             account.push_back(pwd.substr(0, c));
-            
+
             accounts.push_back(account);
         }
         return accounts;
