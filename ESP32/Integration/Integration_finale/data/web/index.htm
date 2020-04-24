@@ -55,13 +55,16 @@
 		<div class="w3-content w3-justify w3-text-grey w3-padding-64" id="Acounts">
 			<h2 class="w3-text-light-grey">Acounts</h2>
 			<hr style="width:200px" class="w3-opacity">
-			
-			<table id="Acounts">
-				<thead>
-					<th>site</th>
-					<th>username</th>
-					<th>password</th>
+
+			<table class="w3-table-all" id="Acounts">
+				<thead class="w3-text-light-grey">
+					<tr class="w3-dark-grey">
+						<th>site</th>
+						<th>username</th>
+						<th>password</th>
+					</tr>
 				</thead>
+				<tbody></tbody>
 			</table>
 
 			<!-- End Acounts Section -->
@@ -71,11 +74,14 @@
 		<div class="w3-padding-64 w3-content" id="NewAcount">
 			<h2 class="w3-text-light-grey">New Acount</h2>
 			<hr style="width:200px" class="w3-opacity">
-			<form action="createAcc" method="POST">
-				<input name="site" type="text">
-				<input name="username" type="text">
-				<input name="password" type="text">
-				<input type="submit" value="Press here" id="SubmitAddAcc">
+			<form id="NewAccountForm" class="w3-container" action="createAcc" method="POST">
+				<label for="Site">Site</label>
+				<input class="w3-input" name="site" type="text">
+				<label for="username">Username</label>
+				<input class="w3-input" name="username" type="text">
+				<label for="password">Password</label>
+				<input class="w3-input" name="password" type="text">
+				<input class="w3-input w3-margin-top" type="submit" value="Press here" id="SubmitAddAcc">
 			</form>
 
 
@@ -89,34 +95,30 @@
 
 	<script src="js/jquery.js"></script>
 	<script>
-		// $('form').submit(function () {
-		// 	$.post($(this).attr('action'), function () {
-		// 		$("#SubmitAddAcc").text("added")
-		// 	});
-		// 	return false; // prevent submitting the form
-		// });
-	
-		function fillacount(element){
-			for (let elmt of element.split("\n")){
-				$("#Acounts").append("<tr>");
-				for(let e of elmt.split(" ") ){
-					$("#Acounts").append("<td>" + e + "</td>");		
-				}
-				$("#Acounts").append("</tr>");
+		$.ajax(
+			'getAcc', {
+				success: (element) => {
 
-			}
+					for (let elmt of element.split("\n")) {
+						let ligne = "<tr>"
+						for (let e of elmt.split(" ")) {
+							ligne += "<td>" + e + "</td>";
+						}
+						ligne += "</tr>";
+						$("#Acounts tbody:last").append(ligne);
+					}
+				}, // Nous renseignons uniquement le nom de la fonction de retour.
+				dataType: 'text' // Format des données reçues.
+			}).error((e) => {
+			alert("ERROR loading accounts");
+		});
 
-
-		}
-		$.get(
-			'getAcc', // Le fichier cible côté serveur.
-			'false', // Nous utilisons false, pour dire que nous n'envoyons pas de données.
-			fillacount, // Nous renseignons uniquement le nom de la fonction de retour.
-			'plain/text' // Format des données reçues.
-			);
-		
-	
-
+		$('#NewAccountForm').submit(function () {
+			$.post($(this).attr('action'), function () {
+				$("#SubmitAddAcc").text("added")
+			});
+			return false; // prevent submitting the form
+		});
 	</script>
 
 </body>
