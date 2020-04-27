@@ -7,7 +7,8 @@ char contentTypes[][2][32] = {
     {".htm", "text/html"},         {".html", "text/html"},
     {".css", "text/css"},          {".js", "application/javascript"},
     {".json", "application/json"}, {".png", "image/png"},
-    {".jpg", "image/jpg"},         {"", ""}};
+    {".jpg", "image/jpg"},         {".ico", "image/vnd.microsoft.icon"},
+    {"", ""}};
 
 // Include certificate data (see note above)
 #include "cert.h"

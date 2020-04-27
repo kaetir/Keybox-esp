@@ -318,6 +318,7 @@ void Model::save_Wifi_Key(fs::FS &fs, int index, std::string pwd)
     {
       Wifis_SSID.push_back(line);
     }
+    i++;
   }
 
   if (std::binary_search(Wifis_SSID.begin(), Wifis_SSID.end(), SSID) ==
@@ -385,6 +386,7 @@ std::string Model::get_Wifi_Key(fs::FS &fs, int index)
     {
       Wifis_Key.push_back(line);
     }
+    i++;
   }
 
   std::string ret = "";
