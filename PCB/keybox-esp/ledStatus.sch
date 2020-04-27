@@ -1,0 +1,83 @@
+EESchema Schematic File Version 4
+EELAYER 30 0
+EELAYER END
+$Descr A4 11693 8268
+encoding utf-8
+Sheet 2 2
+Title ""
+Date ""
+Rev ""
+Comp ""
+Comment1 ""
+Comment2 ""
+Comment3 ""
+Comment4 ""
+$EndDescr
+$Comp
+L Device:LED_RGBA LED_STATUS?
+U 1 1 5EA54E86
+P 1550 1525
+F 0 "LED_STATUS?" H 1975 1275 50  0000 C CNN
+F 1 "LED_RGB" H 2000 1150 50  0000 C CNN
+F 2 "LED_SMD:LED_Avago_PLCC4_3.2x2.8mm_CW" H 1550 1475 50  0001 C CNN
+F 3 "~" H 1550 1475 50  0001 C CNN
+	1    1550 1525
+	-1   0    0    1   
+$EndComp
+$Comp
+L power:+3.3V #PWR?
+U 1 1 5EA54E8C
+P 1350 1525
+F 0 "#PWR?" H 1350 1375 50  0001 C CNN
+F 1 "+3.3V" V 1365 1653 50  0000 L CNN
+F 2 "" H 1350 1525 50  0001 C CNN
+F 3 "" H 1350 1525 50  0001 C CNN
+	1    1350 1525
+	0    -1   -1   0   
+$EndComp
+$Comp
+L Device:R_Small RBS?
+U 1 1 5EA54E92
+P 1950 1325
+F 0 "RBS?" V 1875 1325 50  0000 C CNN
+F 1 "150" V 1950 1325 50  0000 C CNN
+F 2 "Resistor_SMD:R_1206_3216Metric_Pad1.42x1.75mm_HandSolder" H 1950 1325 50  0001 C CNN
+F 3 "~" H 1950 1325 50  0001 C CNN
+	1    1950 1325
+	0    1    1    0   
+$EndComp
+$Comp
+L Device:R_Small RGS?
+U 1 1 5EA54E98
+P 1950 1525
+F 0 "RGS?" V 1875 1525 50  0000 C CNN
+F 1 "150" V 1950 1525 50  0000 C CNN
+F 2 "Resistor_SMD:R_1206_3216Metric_Pad1.42x1.75mm_HandSolder" H 1950 1525 50  0001 C CNN
+F 3 "~" H 1950 1525 50  0001 C CNN
+	1    1950 1525
+	0    1    1    0   
+$EndComp
+$Comp
+L Device:R_Small RRS?
+U 1 1 5EA54E9E
+P 1950 1725
+F 0 "RRS?" V 1875 1725 50  0000 C CNN
+F 1 "150" V 1950 1725 50  0000 C CNN
+F 2 "Resistor_SMD:R_1206_3216Metric_Pad1.42x1.75mm_HandSolder" H 1950 1725 50  0001 C CNN
+F 3 "~" H 1950 1725 50  0001 C CNN
+	1    1950 1725
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	1850 1325 1750 1325
+Wire Wire Line
+	1750 1525 1850 1525
+Wire Wire Line
+	1750 1725 1850 1725
+Text GLabel 2050 1325 2    50   Input ~ 0
+LED_RGB_SB
+Text GLabel 2050 1525 2    50   Input ~ 0
+LED_RGB_SG
+Text GLabel 2050 1725 2    50   Input ~ 0
+LED_RGB_SR
+$EndSCHEMATC
