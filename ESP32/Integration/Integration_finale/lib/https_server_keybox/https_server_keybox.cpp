@@ -55,16 +55,20 @@ void handleParams(httpsserver::HTTPRequest *req,
  */
 void handleSPIFFS(httpsserver::HTTPRequest *req,
                   httpsserver::HTTPResponse *res) {
-  // if (!wallet2->isWalletcreated()) {  // true if usable, false if poop
-  //   res->println("PAS DE WALLET");
-  //   return;
-  // }
 
   // We only handle GET here
   if (req->getMethod() == "GET" || req->getMethod() == "POST") {
+    std::string reqFile;
+  if (!wallet2->isWalletcreated()) {  // true if usable, false if poop
+    // Redirect / to /newWallet.html
+     reqFile =
+        req->getRequestString() == "/" ? "/newWallet.htm" : req->getRequestString();
+  }else{
     // Redirect / to /index.html
-    std::string reqFile =
+    reqFile =
         req->getRequestString() == "/" ? "/index.htm" : req->getRequestString();
+
+  }
 
     // Try to open the file
     std::string filename = std::string("/web") + reqFile;
@@ -139,7 +143,10 @@ void handleCreate(httpsserver::HTTPRequest *req,
 
     Serial.println("Unlock");
     wallet2->unlock(password);
+    res->setHeader("Refresh", ".5; url=/");
+    res->print("wallet created");
   }
+
 }
 
 void handleCreateAccount(httpsserver::HTTPRequest *req,
@@ -160,7 +167,7 @@ void handleCreateAccount(httpsserver::HTTPRequest *req,
 
   if (username.length() > 0 && password.length() > 0 && site.length() > 0)
     wallet2->addAccount(site, username, password);
-
+  res->setHeader("Refresh", ".5; url=/");
   res->print("account added ");
 }
 
@@ -176,14 +183,18 @@ void handleGetAccounts(httpsserver::HTTPRequest *req,
   for (auto a : tmp_acc) {
     for (auto b : a) {
       res->print(b.c_str());
-      res->print(" ");
+      if (b != a.back())
+       res->print(" ");
     }
-    res->print("\n");
+    if (a != tmp_acc.back()) 
+      res->print("\n");
   }
 }
 
 void handleDeleteAccount(httpsserver::HTTPRequest *req,
-                         httpsserver::HTTPResponse *res) {}
+                         httpsserver::HTTPResponse *res) {
+                           //! TODO
+                         }
 
 void handleLock(httpsserver::HTTPRequest *req, httpsserver::HTTPResponse *res) {
   wallet2->saveWallet();
@@ -205,8 +216,6 @@ void https_server_keybox::serverTask(void *params) {
       new httpsserver::ResourceNode("", "", &handleSPIFFS);
   httpsserver::ResourceNode *nodeQueryDemo =
       new httpsserver::ResourceNode("/index", "GET", &handleParams);
-  // httpsserver::ResourceNode *nodeLogin =
-  // new httpsserver::ResourceNode("/login", "POST", &handleLogin);
   httpsserver::ResourceNode *nodeCreate =
       new httpsserver::ResourceNode("/create", "POST", &handleCreate);
   httpsserver::ResourceNode *nodeCreateAccount =
@@ -223,7 +232,6 @@ void https_server_keybox::serverTask(void *params) {
   // does not hit any other node will be redirected to the file system.
   ((https_server_keybox *)params)->secureServer.setDefaultNode(spiffsNode);
   ((https_server_keybox *)params)->secureServer.registerNode(nodeQueryDemo);
-  //((https_server_keybox *)params)->secureServer.registerNode(nodeLogin);
   ((https_server_keybox *)params)->secureServer.registerNode(nodeCreate);
   ((https_server_keybox *)params)->secureServer.registerNode(nodeCreateAccount);
   ((https_server_keybox *)params)->secureServer.registerNode(nodeGetAccounts);
