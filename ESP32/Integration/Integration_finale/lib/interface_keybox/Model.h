@@ -3,7 +3,6 @@
 #include <string>
 #include <vector>
 
-#include "FS.h"
 #include "SPIFFS.h"
 #include "Wallet.h"
 #include "https_server_keybox.h"

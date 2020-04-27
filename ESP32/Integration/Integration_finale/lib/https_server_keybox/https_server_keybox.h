@@ -20,7 +20,6 @@
 #include <vector>
 
 // We will use SPIFFS and FS
-#include "FS.h"
 #include "SPIFFS.h"
 #include "Wallet.h"
 

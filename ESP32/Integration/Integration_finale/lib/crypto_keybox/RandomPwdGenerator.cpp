@@ -5,8 +5,11 @@ static const char alphnum[] =
     "0123456789"
     "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
     "abcdefghijklmnopqrstuvwxyz";
+
 int strLen = sizeof(alphnum) - 1;
+
 char GenRand() { return alphnum[esp_random() % strLen]; }
+
 std::string generate_random_string(int len) {
   int n = len, c = 0, s = 0;
   time_t current_time;
@@ -24,6 +27,5 @@ std::string generate_random_string(int len) {
       s++;
     }
   }
-  std::cout << D;
   return D;
 }
